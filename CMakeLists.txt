@@ -14,9 +14,13 @@ include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
 # ---- Declare library ----
-
 add_library(span_or_vector_span_or_vector INTERFACE)
 add_library(span_or_vector::span_or_vector ALIAS span_or_vector_span_or_vector)
+
+if (CXX_STANDARD LESS 20)
+    find_package(Boost 1.78.0 REQUIRED)
+    target_link_libraries(span_or_vector_span_or_vector INTERFACE Boost::boost)
+endif()
 
 set_property(
     TARGET span_or_vector_span_or_vector PROPERTY
@@ -28,8 +32,6 @@ target_include_directories(
     INTERFACE
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 )
-
-target_compile_features(span_or_vector_span_or_vector INTERFACE cxx_std_11)
 
 # ---- Install rules ----
 
