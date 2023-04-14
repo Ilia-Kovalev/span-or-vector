@@ -200,9 +200,7 @@ public:
 
   void shrink_to_fit()
   {
-    if (is_span()) {
-      span_capacity_ = size();
-    } else {
+    if (is_vector()) {
       modify_as_vector([&](vector_type& vec) { vec.shrink_to_fit(); });
     }
   }
