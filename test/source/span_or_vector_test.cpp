@@ -72,9 +72,16 @@ private:
 };
 
 template<class T>
-auto operator!=(const test_allocator<T>&, const test_allocator<T>&) -> bool
+auto operator!=(const test_allocator<T>& lhs, const test_allocator<T>& rhs)
+    -> bool
 {
-  return false;
+  return !(lhs == rhs);
+}
+
+template<class T>
+auto operator==(const test_allocator<T>&, const test_allocator<T>&) -> bool
+{
+  return true;
 }
 
 template<class T>
@@ -273,6 +280,29 @@ BOOST_AUTO_TEST_CASE(test_copy_as_vector)
                     input.get_allocator().n_allocations() + 1);
   BOOST_CHECK_EQUAL(input.get_allocator().label(), out.get_allocator().label());
   BOOST_CHECK_NE(input.data(), out.data());
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+// cppcheck-suppress unknownMacro
+BOOST_AUTO_TEST_SUITE(test_assignments)
+
+BOOST_AUTO_TEST_CASE(test_copy_span_to_span)
+{
+  std::vector<int> in_data1 {1, 2, 3};
+  std::vector<int> in_data2 {4, 5, 6, 7};
+  const test_type<int> input {
+      in_data2.data(), in_data2.size(), test_allocator<int> {"a"}};
+
+  test_type<int> out {in_data1.data(), in_data1.size()};
+  out = input;
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), input.get_allocator().label());
+  BOOST_CHECK_NE(out.data(), input.data());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
