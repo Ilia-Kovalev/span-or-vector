@@ -181,7 +181,6 @@ public:
     }
 
     if (new_cap <= span_capacity_) {
-      span_capacity_ = new_cap;
       return;
     }
 
