@@ -112,6 +112,54 @@ public:
   using vector_type::get_allocator;
   using vector_type::max_size;
 
+  span_or_vector_base() = default;
+  span_or_vector_base(const span_or_vector_base& other) { *this = other; }
+  span_or_vector_base(span_or_vector_base&& other) noexcept
+  {
+    *this = std::move(other);
+  }
+  ~span_or_vector_base() = default;
+  auto operator=(const span_or_vector_base& other) -> span_or_vector_base&
+  {
+    if (this == &other) {
+      return *this;
+    }
+
+    if (other.is_span()) {
+      modify_as_vector(
+          [&](vector_type& vec)
+          {
+            vec = static_cast<const vector_type&>(other);
+            vec.reserve(other.capacity());
+            vec.assign(other.begin(), other.end());
+          });
+    } else {
+      modify_as_vector([&](vector_type& vec)
+                       { vec = static_cast<const vector_type&>(other); });
+    }
+
+    return *this;
+  }
+
+  auto operator=(span_or_vector_base&& other) noexcept -> span_or_vector_base&
+  {
+    if (this == &other) {
+      return *this;
+    }
+
+    if (other.is_span()) {
+      vector_type::operator=(std::move(static_cast<vector_type&&>(other)));
+      span_type::operator=(std::move(static_cast<span_type&&>(other)));
+      is_span_ = true;
+      span_capacity_ = other.span_capacity_;
+    } else {
+      modify_as_vector([&](vector_type& vec)
+                       { vec = std::move(static_cast<vector_type&&>(other)); });
+    }
+
+    return *this;
+  }
+
   span_or_vector_base(T* first, size_type count, const Allocator& alloc = {})
       : vector_type(alloc)
       , span_type(first, count)
@@ -171,24 +219,6 @@ public:
       : vector_type(init, alloc)
       , span_type(vector_type::data(), vector_type::size())
   {
-  }
-
-  auto operator=(const vector_type& other) -> span_or_vector_base&
-  {
-    modify_as_vector([&](vector_type& vec) { vec = other; });
-    return *this;
-  }
-
-  auto operator=(vector_type&& other) -> span_or_vector_base&
-  {
-    modify_as_vector([&](vector_type& vec) { vec = std::move(other); });
-    return *this;
-  }
-
-  auto operator=(std::initializer_list<T> ilist) -> span_or_vector_base&
-  {
-    assign(ilist);
-    return *this;
   }
 
   void reserve(size_type new_cap)
@@ -277,55 +307,6 @@ public:
                                           { return std::move(vec); });
     }
     return {begin(), end()};
-  }
-
-protected:
-  span_or_vector_base() = default;
-  span_or_vector_base(const span_or_vector_base& other) { *this = other; }
-  span_or_vector_base(span_or_vector_base&& other) noexcept
-  {
-    *this = std::move(other);
-  }
-  ~span_or_vector_base() = default;
-  auto operator=(const span_or_vector_base& other) -> span_or_vector_base&
-  {
-    if (this == &other) {
-      return *this;
-    }
-
-    if (other.is_span()) {
-      modify_as_vector(
-          [&](vector_type& vec)
-          {
-            vec = static_cast<const vector_type&>(other);
-            vec.reserve(other.capacity());
-            vec.assign(other.begin(), other.end());
-          });
-    } else {
-      modify_as_vector([&](vector_type& vec)
-                       { vec = static_cast<const vector_type&>(other); });
-    }
-
-    return *this;
-  }
-
-  auto operator=(span_or_vector_base&& other) noexcept -> span_or_vector_base&
-  {
-    if (this == &other) {
-      return *this;
-    }
-
-    if (other.is_span()) {
-      vector_type::operator=(std::move(static_cast<vector_type&&>(other)));
-      span_type::operator=(std::move(static_cast<span_type&&>(other)));
-      is_span_ = true;
-      span_capacity_ = other.span_capacity_;
-    } else {
-      modify_as_vector([&](vector_type& vec)
-                       { vec = std::move(static_cast<vector_type&&>(other)); });
-    }
-
-    return *this;
   }
 
   template<class F>
@@ -429,72 +410,36 @@ auto operator<=(const span_or_vector_base<T, Allocator>& lhs,
 }
 
 template<class T, class Allocator>
-class span_or_vector_element_access
-    : virtual public span_or_vector_base<T, Allocator>
+class span_or_vector_assignments
+    : virtual protected span_or_vector_base<T, Allocator>
 {
   using base = span_or_vector_base<T, Allocator>;
-
-  using value_type = typename base::value_type;
-  using allocator_type = typename base::allocator_type;
-  using size_type = typename base::size_type;
-  using difference_type = typename base::difference_type;
-  using reference = typename base::reference;
-  using const_reference = typename base::const_reference;
-  using pointer = typename base::pointer;
-  using const_pointer = typename base::const_pointer;
-  using iterator = typename base::iterator;
-  using const_iterator = typename base::const_iterator;
-  using reverse_iterator = typename base::reverse_iterator;
-  using const_reverse_iterator = typename base::const_reverse_iterator;
 
 public:
-  auto at(size_type pos) const -> const_reference
-  {
-    check_out_of_range(pos);
-    return this->operator[](pos);
-  }
-
-  auto at(size_type pos) -> reference
-  {
-    check_out_of_range(pos);
-    return this->operator[](pos);
-  }
-
-private:
-  void check_out_of_range(size_type pos) const
-  {
-    if (pos >= this->size()) {
-      throw std::out_of_range(std::string("span_or_vector::at : Position ")
-                              + std::to_string(pos) + " is out of range [0, "
-                              + this->size() + ")");
-    }
-  }
-};
-
-template<class T, class Allocator>
-class span_or_vector_modifiers
-    : virtual public span_or_vector_base<T, Allocator>
-{
-  using base = span_or_vector_base<T, Allocator>;
   using vector_type = typename base::vector_type;
-
-  using value_type = typename base::value_type;
-  using allocator_type = typename base::allocator_type;
   using size_type = typename base::size_type;
-  using difference_type = typename base::difference_type;
-  using reference = typename base::reference;
-  using const_reference = typename base::const_reference;
-  using pointer = typename base::pointer;
-  using const_pointer = typename base::const_pointer;
-  using iterator = typename base::iterator;
-  using const_iterator = typename base::const_iterator;
-  using reverse_iterator = typename base::reverse_iterator;
-  using const_reverse_iterator = typename base::const_reverse_iterator;
 
-public:
+  auto operator=(const vector_type& other) -> span_or_vector_assignments&
+  {
+    modify_as_vector([&](vector_type& vec) { vec = other; });
+    return *this;
+  }
+
+  auto operator=(vector_type&& other) -> span_or_vector_assignments&
+  {
+    modify_as_vector([&](vector_type& vec) { vec = std::move(other); });
+    return *this;
+  }
+
+  auto operator=(std::initializer_list<T> ilist) -> span_or_vector_assignments&
+  {
+    assign(ilist);
+    return *this;
+  }
+
   void assign(size_type count, const T& value)
   {
-    this->resize(count);
+    this->resize(count, value);
     std::fill_n(this->begin(), count, value);
   }
 
@@ -509,26 +454,83 @@ public:
   {
     assign(ilist.begin(), ilist.end());
   }
+};
+
+template<class T, class Allocator>
+class span_or_vector_element_access
+    : virtual protected span_or_vector_base<T, Allocator>
+{
+  using base = span_or_vector_base<T, Allocator>;
+
+public:
+  using size_type = typename base::size_type;
+  using reference = typename base::reference;
+  using const_reference = typename base::const_reference;
+
+  auto at(size_type pos) const -> const_reference
+  {
+    check_out_of_range(pos);
+    return operator[](pos);
+  }
+
+  auto at(size_type pos) -> reference
+  {
+    check_out_of_range(pos);
+    return operator[](pos);
+  }
+
+  using base::begin;
+  using base::end;
+  using base::operator[];
+  using base::back;
+  using base::cbegin;
+  using base::cend;
+  using base::crbegin;
+  using base::crend;
+  using base::data;
+  using base::front;
+  using base::rbegin;
+  using base::rend;
+
+private:
+  void check_out_of_range(size_type pos) const
+  {
+    if (pos >= this->size()) {
+      throw std::out_of_range(std::string("span_or_vector::at : Position ")
+                              + std::to_string(pos) + " is out of range [0, "
+                              + this->size() + ")");
+    }
+  }
+};
+
+template<class T, class Allocator>
+class span_or_vector_modifiers
+    : virtual protected span_or_vector_base<T, Allocator>
+{
+  using base = span_or_vector_base<T, Allocator>;
+
+public:
+  using vector_type = typename base::vector_type;
+  using size_type = typename base::size_type;
+  using iterator = typename base::iterator;
+  using const_iterator = typename base::const_iterator;
 
   auto insert(const_iterator pos, const T& value) -> iterator
   {
-    return insert_impl(pos, value);
+    return insert(pos, 1, value);
   }
 
   auto insert(const_iterator pos, T&& value) -> iterator
   {
-    return insert_impl(pos, std::move(value));
+    return emplace(pos, std::move(value));
   }
 
   auto insert(const_iterator pos, size_type count, const T& value) -> iterator
   {
-    if (count == 0) {
-      return pos;
-    }
-
     if (this->is_vector()) {
-      return modify_as_vector([&](vector_type& vec) -> iterator
-                              { return vec.insert(pos, count, value); });
+      return modify_as_vector_with_return(
+          [&](vector_type& vec) -> iterator
+          { return vec.insert(pos, count, value); });
     }
 
     return insert_into_span(pos,
@@ -540,12 +542,6 @@ public:
   template<class InputIt>
   auto insert(const_iterator pos, InputIt first, InputIt last) -> iterator
   {
-    const auto count = std::distance(first, last);
-
-    if (count == 0) {
-      return pos;
-    }
-
     if (this->is_vector()) {
       return modify_as_vector_with_return(
           [&](vector_type& vec) -> iterator
@@ -553,7 +549,7 @@ public:
     }
 
     return insert_into_span(pos,
-                            count,
+                            std::distance(first, last),
                             [&](iterator iter) -> iterator
                             { return std::copy(first, last, iter); });
   }
@@ -566,48 +562,35 @@ public:
   template<class... Args>
   auto emplace(const_iterator pos, Args&&... args) -> iterator
   {
-    const auto count = sizeof...(args);
-
-    if (count == 0) {
-      return pos;
-    }
-
     if (this->is_vector()) {
-      return modify_as_vector(
+      return modify_as_vector_with_return(
           [&](vector_type& vec) -> iterator
           { return vec.emplace(pos, std::forward<Args>(args)...); });
     }
 
     return insert_into_span(
         pos,
-        count,
+        sizeof...(args),
         [&](iterator iter) -> iterator
         { return detail::forward_into(iter, std::forward<Args>(args)...); });
   }
 
-  auto erase(const_iterator pos) -> iterator
-  {
-    if (pos == this->end()) {
-      return this->end();
-    }
-
-    return erase(pos, pos + 1);
-  }
+  auto erase(const_iterator pos) -> iterator { return erase(pos, pos + 1); }
 
   auto erase(const_iterator first, const_iterator last) -> iterator
   {
     if (this->is_vector()) {
-      return modify_as_vector([&](vector_type& vec) -> iterator
-                              { return vec.erase(first, last); });
+      return modify_as_vector_with_return([&](vector_type& vec) -> iterator
+                                          { return vec.erase(first, last); });
     }
 
-    const auto out_it = std::move(last, this->end(), first);
-    resize(this->size() - std::distance(first, last));
+    std::move(last, this->end(), first);
+    this->resize(this->size() - std::distance(first, last));
     return first;
   }
 
-  void push_back(const T& value) { push_back_impl(value); }
-  void push_back(T&& value) { push_back_impl(std::move(value)); }
+  void push_back(const T& value) { insert(this->end(), value); }
+  void push_back(T&& value) { insert(this->end(), std::move(value)); }
 
   template<class... Args>
   void emplace_back(Args&&... args)
@@ -615,51 +598,11 @@ public:
     emplace(this->end(), std::forward<Args>(args)...);
   }
 
-  void pop_back()
-  {
-    if (this->is_vector()) {
-      modify_as_vector([](vector_type& vec) { vec.pop_back(); });
-    } else {
-      resize(this->size() - 1);
-    }
-  }
+  void pop_back() { this->resize(this->size() - 1); }
 
   void clear() { this->resize(0); }
 
 private:
-  template<typename U>
-  auto insert_impl(const_iterator pos, U&& value) -> iterator
-  {
-    if (this->is_vector()) {
-      return modify_as_vector([&](vector_type& vec)
-                              { vec.insert(pos, std::forward<U>(value)); });
-    }
-
-    return insert_into_span(pos,
-                            1,
-                            [&](iterator iter) -> iterator
-                            { return *iter++ = std::forward<U>(value); });
-  }
-
-  template<typename U>
-  void push_back_impl(U&& value)
-  {
-    if (this->is_vector()) {
-      modify_as_vector([&](vector_type& vec)
-                       { vec.push_back(std::forward<U>(vec)); });
-      return;
-    }
-
-    if (this->size() < this->capacity()) {
-      resize(this->size() + 1);
-      this->back() = std::forward<U>(value);
-      return;
-    }
-
-    switch_to_vector(this->size() + 1);
-    push_back(std::forward<U>(value));
-  }
-
   template<class FillInsertedValues>
   auto insert_into_span(const_iterator pos,
                         size_type count,
@@ -672,7 +615,6 @@ private:
         "Wrong callable type");
 
     assert(this->is_span());
-    assert(count > 0);
 
     const auto new_size = this->size() + count;
     if (new_size <= this->capacity()) {
@@ -683,7 +625,7 @@ private:
       return pos;
     }
 
-    return modify_as_vector(
+    return modify_as_vector_with_return(
         [&](vector_type& vec) -> iterator
         {
           vec.resize(new_size);
@@ -701,11 +643,15 @@ private:
 
 template<class T, class Allocator = std::allocator<T>>
 class span_or_vector final
-    : virtual public detail::span_or_vector_base<T, Allocator>
-    , public detail::span_or_vector_element_access<T, Allocator>
-    , public detail::span_or_vector_modifiers<T, Allocator>
+    : virtual private detail::span_or_vector_base<T, Allocator>
+    , private detail::span_or_vector_element_access<T, Allocator>
+    , private detail::span_or_vector_modifiers<T, Allocator>
+    , private detail::span_or_vector_assignments<T, Allocator>
 {
   using base = detail::span_or_vector_base<T, Allocator>;
+  using element_access = detail::span_or_vector_element_access<T, Allocator>;
+  using modifiers = detail::span_or_vector_modifiers<T, Allocator>;
+  using assignments = detail::span_or_vector_assignments<T, Allocator>;
 
 public:
   using value_type = typename base::value_type;
@@ -744,5 +690,43 @@ public:
     base::operator=(std::move(other));
     return *this;
   }
+
+  using base::is_span;
+  using base::is_vector;
+
+  using base::capacity;
+  using base::empty;
+  using base::get_allocator;
+  using base::max_size;
+  using base::reserve;
+  using base::resize;
+  using base::shrink_to_fit;
+  using base::size;
+  using base::swap;
+
+  using assignments::assign;
+  using assignments::operator=;
+
+  using element_access::at;
+  using element_access::begin;
+  using element_access::end;
+  using element_access::operator[];
+  using element_access::back;
+  using element_access::cbegin;
+  using element_access::cend;
+  using element_access::crbegin;
+  using element_access::crend;
+  using element_access::data;
+  using element_access::front;
+  using element_access::rbegin;
+  using element_access::rend;
+
+  using modifiers::clear;
+  using modifiers::emplace;
+  using modifiers::emplace_back;
+  using modifiers::erase;
+  using modifiers::insert;
+  using modifiers::pop_back;
+  using modifiers::push_back;
 };
 }  // namespace span_or_vector
