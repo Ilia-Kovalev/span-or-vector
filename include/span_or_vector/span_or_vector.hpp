@@ -77,10 +77,9 @@ class span_or_vector_base
 {
   using span_type = span<T>;
 
-protected:
+public:
   using vector_type = std::vector<T, Allocator>;
 
-public:
   using value_type = typename span_type::value_type;
   using allocator_type = typename vector_type::allocator_type;
   using size_type = typename span_type::size_type;
@@ -113,12 +112,16 @@ public:
   using vector_type::max_size;
 
   span_or_vector_base() = default;
-  span_or_vector_base(const span_or_vector_base& other) { *this = other; }
-  span_or_vector_base(span_or_vector_base&& other) noexcept
+  span_or_vector_base(const span_or_vector_base& other)
+      : vector_type()
+      , span_type()
   {
-    *this = std::move(other);
+    *this = other;
   }
+
+  span_or_vector_base(span_or_vector_base&& other) noexcept = default;
   ~span_or_vector_base() = default;
+
   auto operator=(const span_or_vector_base& other) -> span_or_vector_base&
   {
     if (this == &other) {
@@ -141,24 +144,8 @@ public:
     return *this;
   }
 
-  auto operator=(span_or_vector_base&& other) noexcept -> span_or_vector_base&
-  {
-    if (this == &other) {
-      return *this;
-    }
-
-    if (other.is_span()) {
-      vector_type::operator=(std::move(static_cast<vector_type&&>(other)));
-      span_type::operator=(std::move(static_cast<span_type&&>(other)));
-      is_span_ = true;
-      span_capacity_ = other.span_capacity_;
-    } else {
-      modify_as_vector([&](vector_type& vec)
-                       { vec = std::move(static_cast<vector_type&&>(other)); });
-    }
-
-    return *this;
-  }
+  auto operator=(span_or_vector_base&& other) noexcept
+      -> span_or_vector_base& = default;
 
   span_or_vector_base(T* first, size_type count, const Allocator& alloc = {})
       : vector_type(alloc)
@@ -419,6 +406,15 @@ public:
   using vector_type = typename base::vector_type;
   using size_type = typename base::size_type;
 
+  span_or_vector_assignments() = default;
+  ~span_or_vector_assignments() = default;
+  span_or_vector_assignments(const span_or_vector_assignments&) = default;
+  span_or_vector_assignments(span_or_vector_assignments&&) noexcept = default;
+  auto operator=(const span_or_vector_assignments&)
+      -> span_or_vector_assignments& = default;
+  auto operator=(span_or_vector_assignments&&) noexcept
+      -> span_or_vector_assignments& = delete;
+
   auto operator=(const vector_type& other) -> span_or_vector_assignments&
   {
     modify_as_vector([&](vector_type& vec) { vec = other; });
@@ -467,6 +463,16 @@ public:
   using reference = typename base::reference;
   using const_reference = typename base::const_reference;
 
+  span_or_vector_element_access() = default;
+  ~span_or_vector_element_access() = default;
+  span_or_vector_element_access(const span_or_vector_element_access&) = default;
+  span_or_vector_element_access(span_or_vector_element_access&&) noexcept =
+      default;
+  auto operator=(const span_or_vector_element_access&)
+      -> span_or_vector_element_access& = default;
+  auto operator=(span_or_vector_element_access&&) noexcept
+      -> span_or_vector_element_access& = delete;
+
   auto at(size_type pos) const -> const_reference
   {
     check_out_of_range(pos);
@@ -514,6 +520,15 @@ public:
   using size_type = typename base::size_type;
   using iterator = typename base::iterator;
   using const_iterator = typename base::const_iterator;
+
+  span_or_vector_modifiers() = default;
+  ~span_or_vector_modifiers() = default;
+  span_or_vector_modifiers(const span_or_vector_modifiers&) = default;
+  span_or_vector_modifiers(span_or_vector_modifiers&&) noexcept = default;
+  auto operator=(const span_or_vector_modifiers&)
+      -> span_or_vector_modifiers& = default;
+  auto operator=(span_or_vector_modifiers&&) noexcept
+      -> span_or_vector_modifiers& = delete;
 
   auto insert(const_iterator pos, const T& value) -> iterator
   {
@@ -642,7 +657,7 @@ private:
 }  // namespace detail
 
 template<class T, class Allocator = std::allocator<T>>
-class span_or_vector final
+class span_or_vector
     : virtual private detail::span_or_vector_base<T, Allocator>
     , private detail::span_or_vector_element_access<T, Allocator>
     , private detail::span_or_vector_modifiers<T, Allocator>
@@ -667,24 +682,24 @@ public:
   using reverse_iterator = typename base::reverse_iterator;
   using const_reverse_iterator = typename base::const_reverse_iterator;
 
+  using vector_type = typename base::vector_type;
+
   using base::base;
 
   span_or_vector() = default;
   ~span_or_vector() = default;
-  span_or_vector(const span_or_vector& other)
-      : base(other)
-  {
-  }
-  span_or_vector(span_or_vector&& other) noexcept
-      : base(std::move(other))
-  {
-  }
+  span_or_vector(const span_or_vector& other) = default;
+  span_or_vector(span_or_vector&& other) noexcept = default;
 
   auto operator=(const span_or_vector& other) -> span_or_vector&
   {
+    if (this == &other) {
+      return *this;
+    }
     base::operator=(other);
     return *this;
   }
+
   auto operator=(span_or_vector&& other) noexcept -> span_or_vector&
   {
     base::operator=(std::move(other));
@@ -693,6 +708,7 @@ public:
 
   using base::is_span;
   using base::is_vector;
+  using base::operator vector_type;
 
   using base::capacity;
   using base::empty;

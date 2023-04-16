@@ -87,6 +87,7 @@ auto operator==(const test_allocator<T>&, const test_allocator<T>&) -> bool
 template<class T>
 using test_type = span_or_vector<T, test_allocator<T>>;
 
+// NOLINTBEGIN
 // cppcheck-suppress unknownMacro
 BOOST_AUTO_TEST_SUITE(test_constructors)
 
@@ -306,5 +307,7 @@ BOOST_AUTO_TEST_CASE(test_copy_span_to_span)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+// NOLINTEND
 
 }  // namespace span_or_vector
