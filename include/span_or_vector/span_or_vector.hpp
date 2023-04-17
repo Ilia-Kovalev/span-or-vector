@@ -133,18 +133,24 @@ public:
       return *this;
     }
 
-    if (other.is_span()) {
-      modify_as_vector(
-          [&](vector_type& vec)
-          {
-            vec = static_cast<const vector_type&>(other);
-            vec.reserve(other.capacity());
-            vec.assign(other.begin(), other.end());
-          });
-    } else {
-      modify_as_vector([&](vector_type& vec)
-                       { vec = static_cast<const vector_type&>(other); });
+    if (is_span()) {
+      // copy allocator via vector assignment operator
+      const vector_type vec_copy {other.get_allocator()};
+      vector_type::operator=(vec_copy);
+
+      resize(other.size());
+      std::copy(other.begin(), other.end(), begin());
+      return *this;
     }
+
+    modify_as_vector(
+        [&](vector_type& vec)
+        {
+          vec = static_cast<const vector_type&>(other);
+          if (other.is_span()) {
+            vec.assign(other.begin(), other.end());
+          }
+        });
 
     return *this;
   }

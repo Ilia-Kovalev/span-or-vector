@@ -355,6 +355,113 @@ BOOST_AUTO_TEST_CASE(test_copy_span_to_span)
   BOOST_CHECK_NE(out.data(), input.data());
 }
 
+BOOST_AUTO_TEST_CASE(test_copy_span_to_bigger_vector)
+{
+  std::vector<int> in_data1 {1, 2, 3};
+  std::vector<int> in_data2 {4, 5, 6, 7};
+  const test_type<int> input {
+      in_data1.data(), in_data1.size(), test_allocator<int> {"a"}};
+
+  test_type<int> out {in_data2.begin(), in_data2.end()};
+  out = input;
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), input.get_allocator().label());
+  BOOST_CHECK_NE(out.data(), input.data());
+}
+
+BOOST_AUTO_TEST_CASE(test_copy_span_to_smaller_vector)
+{
+  std::vector<int> in_data1 {1, 2, 3};
+  std::vector<int> in_data2 {4, 5};
+  const test_type<int> input {
+      in_data1.data(), in_data1.size(), test_allocator<int> {"a"}};
+
+  test_type<int> out {in_data2.begin(), in_data2.end()};
+  out = input;
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), input.get_allocator().label());
+  BOOST_CHECK_NE(out.data(), input.data());
+}
+
+BOOST_AUTO_TEST_CASE(test_copy_vector_to_bigger_span)
+{
+  const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
+  std::vector<int> in_data {4, 5, 6, 7};
+
+  test_type<int> out {in_data.data(), in_data.size()};
+  out = input;
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations()
+                        - input.get_allocator().n_allocations(),
+                    0);
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), input.get_allocator().label());
+  BOOST_CHECK_NE(out.data(), input.data());
+  BOOST_CHECK_EQUAL(out.data(), in_data.data());
+}
+
+BOOST_AUTO_TEST_CASE(test_copy_vector_to_smaller_span)
+{
+  const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
+  std::vector<int> in_data {4, 5};
+
+  test_type<int> out {in_data.data(), in_data.size()};
+  out = input;
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations()
+                        - input.get_allocator().n_allocations(),
+                    1);
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), input.get_allocator().label());
+  BOOST_CHECK_NE(out.data(), input.data());
+  BOOST_CHECK_NE(out.data(), in_data.data());
+}
+BOOST_AUTO_TEST_CASE(test_copy_vector_to_larger_vector)
+{
+  const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
+
+  test_type<int> out {{4, 5, 6, 7}, test_allocator<int> {"b"}};
+  out = input;
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations()
+                        - input.get_allocator().n_allocations(),
+                    0);
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), input.get_allocator().label());
+  BOOST_CHECK_NE(out.data(), input.data());
+}
+
+BOOST_AUTO_TEST_CASE(test_copy_vector_to_smaller_vector)
+{
+  const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
+
+  test_type<int> out {{4, 5}, test_allocator<int> {"b"}};
+  out = input;
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations()
+                        - input.get_allocator().n_allocations(),
+                    1);
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), input.get_allocator().label());
+  BOOST_CHECK_NE(out.data(), input.data());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 // NOLINTEND
