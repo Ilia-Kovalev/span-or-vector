@@ -119,7 +119,12 @@ public:
     *this = other;
   }
 
-  span_or_vector_base(span_or_vector_base&& other) noexcept = default;
+  span_or_vector_base(span_or_vector_base&& other) noexcept
+      : vector_type()
+      , span_type()
+  {
+    *this = std::move(other);
+  }
   ~span_or_vector_base() = default;
 
   auto operator=(const span_or_vector_base& other) -> span_or_vector_base&
@@ -144,8 +149,22 @@ public:
     return *this;
   }
 
-  auto operator=(span_or_vector_base&& other) noexcept
-      -> span_or_vector_base& = default;
+  auto operator=(span_or_vector_base&& other) noexcept -> span_or_vector_base&
+  {
+    vector_type::operator=(std::move(static_cast<vector_type&&>(other)));
+
+    if (other.is_span()) {
+      span_type::operator=(other);
+      span_capacity_ = other.span_capacity_;
+      is_span_ = true;
+    } else {
+      update_span();
+    }
+
+    other.update_span();
+
+    return *this;
+  }
 
   span_or_vector_base(T* first, size_type count, const Allocator& alloc = {})
       : vector_type(alloc)
@@ -249,7 +268,7 @@ public:
     }
 
     switch_to_vector(count);
-    resize(count);
+    modify_as_vector([&](vector_type& vec) { vec.resize(count); });
   }
 
   void resize(size_type count, const value_type& value)
@@ -267,7 +286,7 @@ public:
     }
 
     switch_to_vector(count);
-    resize(count, value);
+    modify_as_vector([&](vector_type& vec) { vec.resize(count, value); });
   }
 
   void swap(span_or_vector_base& other) { std::swap(*this, other); }

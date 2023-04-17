@@ -283,6 +283,55 @@ BOOST_AUTO_TEST_CASE(test_copy_as_vector)
   BOOST_CHECK_NE(input.data(), out.data());
 }
 
+BOOST_AUTO_TEST_CASE(test_move_as_span)
+{
+  std::vector<int> in_data {1, 2, 3};
+  std::size_t in_size {2};
+  test_allocator<int> in_alloc {"a"};
+
+  auto expected = in_data;
+  expected.resize(2);
+
+  test_type<int> input {in_data.data(), in_data.size(), in_alloc};
+  input.resize(in_size);
+
+  test_type<int> out {std::move(input)};
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.data(), in_data.data());
+  BOOST_CHECK_EQUAL(out.capacity(), in_data.size());
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), expected.begin(), expected.end());
+
+  BOOST_CHECK(input.empty());
+  BOOST_CHECK_EQUAL(input.data(), nullptr);
+  BOOST_CHECK(input.is_vector());
+  BOOST_CHECK_EQUAL(input.get_allocator().label(), "");
+}
+
+BOOST_AUTO_TEST_CASE(test_move_as_vector)
+{
+  std::vector<int> in_data {1, 2, 3};
+  test_allocator<int> in_alloc {"a"};
+
+  test_type<int> input {in_data.begin(), in_data.end(), in_alloc};
+
+  test_type<int> out {std::move(input)};
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), in_data.size());
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), in_data.begin(), in_data.end());
+
+  BOOST_CHECK(input.empty());
+  BOOST_CHECK_EQUAL(input.data(), nullptr);
+  BOOST_CHECK(input.is_vector());
+  BOOST_CHECK_EQUAL(input.get_allocator().label(), "");
+}
 BOOST_AUTO_TEST_SUITE_END()
 
 // cppcheck-suppress unknownMacro
