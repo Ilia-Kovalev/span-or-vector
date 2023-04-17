@@ -462,6 +462,117 @@ BOOST_AUTO_TEST_CASE(test_copy_vector_to_smaller_vector)
   BOOST_CHECK_NE(out.data(), input.data());
 }
 
+BOOST_AUTO_TEST_CASE(test_move_span_to_span)
+{
+  std::vector<int> in_data1 {1, 2, 3};
+  std::vector<int> in_data2 {4, 5};
+
+  test_allocator<int> in_alloc {"a"};
+
+  test_type<int> input {in_data1.data(), in_data1.size(), in_alloc};
+  test_type<int> out {
+      in_data2.data(), in_data2.size(), test_allocator<int> {"b"}};
+
+  out = std::move(input);
+
+  BOOST_CHECK(input.is_vector());
+  BOOST_CHECK(input.empty());
+  BOOST_CHECK_EQUAL(input.data(), nullptr);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.data(), in_data1.data());
+  BOOST_CHECK_EQUAL(out.size(), in_data1.size());
+  BOOST_CHECK_EQUAL(out.capacity(), in_data1.size());
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_move_span_to_vector)
+{
+  std::vector<int> in_data1 {1, 2, 3};
+  std::vector<int> in_data2 {4, 5};
+
+  test_allocator<int> in_alloc {"a"};
+
+  test_type<int> input {in_data1.data(), in_data1.size(), in_alloc};
+  test_type<int> out {
+      in_data2.begin(), in_data2.end(), test_allocator<int> {"b"}};
+
+  out = std::move(input);
+
+  BOOST_CHECK(input.is_vector());
+  BOOST_CHECK(input.empty());
+  BOOST_CHECK_EQUAL(input.data(), nullptr);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.data(), in_data1.data());
+  BOOST_CHECK_EQUAL(out.size(), in_data1.size());
+  BOOST_CHECK_EQUAL(out.capacity(), in_data1.size());
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_move_vector_to_span)
+{
+  std::vector<int> in_data1 {1, 2, 3};
+  std::vector<int> in_data2 {4, 5};
+  const auto in_data2_copy = in_data2;
+
+  test_allocator<int> in_alloc {"a"};
+
+  test_type<int> input {in_data1.begin(), in_data1.end(), in_alloc};
+  test_type<int> out {
+      in_data2.data(), in_data2.size(), test_allocator<int> {"b"}};
+
+  out = std::move(input);
+
+  BOOST_CHECK(input.is_vector());
+  BOOST_CHECK(input.empty());
+  BOOST_CHECK_EQUAL(input.data(), nullptr);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.size(), in_data1.size());
+  BOOST_CHECK_EQUAL(out.capacity(), in_data1.size());
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations()
+                        - input.get_allocator().n_allocations(),
+                    0);
+
+  BOOST_CHECK_EQUAL_COLLECTIONS(in_data2.begin(),
+                                in_data2.end(),
+                                in_data2_copy.begin(),
+                                in_data2_copy.end());
+}
+
+BOOST_AUTO_TEST_CASE(test_move_vector_to_vector)
+{
+  std::vector<int> in_data1 {1, 2, 3};
+  std::vector<int> in_data2 {4, 5};
+
+  std::size_t in_capacity {10};
+
+  test_allocator<int> in_alloc {"a"};
+
+  test_type<int> input {in_data1.begin(), in_data1.end(), in_alloc};
+  input.reserve(in_capacity);
+  test_type<int> out {
+      in_data2.begin(), in_data2.end(), test_allocator<int> {"b"}};
+
+  out = std::move(input);
+
+  BOOST_CHECK(input.is_vector());
+  BOOST_CHECK(input.empty());
+  BOOST_CHECK_EQUAL(input.data(), nullptr);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.size(), in_data1.size());
+  BOOST_CHECK_EQUAL(out.capacity(), in_capacity);
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations()
+                        - input.get_allocator().n_allocations(),
+                    0);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 // NOLINTEND
