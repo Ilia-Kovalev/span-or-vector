@@ -89,6 +89,8 @@ using test_type = span_or_vector<T, test_allocator<T>>;
 
 // NOLINTBEGIN
 // cppcheck-suppress unknownMacro
+namespace test_constructors
+{
 BOOST_AUTO_TEST_SUITE(test_constructors)
 
 BOOST_AUTO_TEST_CASE(test_default)
@@ -98,7 +100,7 @@ BOOST_AUTO_TEST_CASE(test_default)
   BOOST_CHECK(out.empty());
   BOOST_CHECK(out.is_vector());
   BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
-}
+}  // namespace span_or_vector
 
 BOOST_AUTO_TEST_CASE(test_alloc)
 {
@@ -333,6 +335,10 @@ BOOST_AUTO_TEST_CASE(test_move_as_vector)
   BOOST_CHECK_EQUAL(input.get_allocator().label(), "");
 }
 BOOST_AUTO_TEST_SUITE_END()
+}  // namespace test_constructors
+
+namespace test_assignments
+{
 
 // cppcheck-suppress unknownMacro
 BOOST_AUTO_TEST_SUITE(test_assignments)
@@ -574,6 +580,7 @@ BOOST_AUTO_TEST_CASE(test_move_vector_to_vector)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+}  // namespace test_assignments
 
 // NOLINTEND
 
