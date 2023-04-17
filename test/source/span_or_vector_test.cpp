@@ -87,10 +87,13 @@ auto operator==(const test_allocator<T>&, const test_allocator<T>&) -> bool
 template<class T>
 using test_type = span_or_vector<T, test_allocator<T>>;
 
+template<class T>
+using vector_type = std::vector<T, test_allocator<T>>;
+
 // NOLINTBEGIN
-// cppcheck-suppress unknownMacro
 namespace test_constructors
 {
+// cppcheck-suppress unknownMacro
 BOOST_AUTO_TEST_SUITE(test_constructors)
 
 BOOST_AUTO_TEST_CASE(test_default)
@@ -117,7 +120,7 @@ BOOST_AUTO_TEST_CASE(test_alloc)
 
 BOOST_AUTO_TEST_CASE(test_count_value_alloc)
 {
-  const std::vector<int> input(3, 0);
+  const vector_type<int> input(3, 0);
   test_allocator<int> in_alloc {"a"};
 
   test_type<int> out {input.size(), 0, in_alloc};
@@ -131,7 +134,7 @@ BOOST_AUTO_TEST_CASE(test_count_value_alloc)
 
 BOOST_AUTO_TEST_CASE(test_first_last_alloc)
 {
-  const std::vector<int> input {1, 2, 3};
+  const vector_type<int> input {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
 
   test_type<int> out(input.begin(), input.end(), in_alloc);
@@ -145,8 +148,7 @@ BOOST_AUTO_TEST_CASE(test_first_last_alloc)
 
 BOOST_AUTO_TEST_CASE(test_copy_from_vector)
 {
-  const std::vector<int, test_allocator<int>> input {{1, 2, 3},
-                                                     test_allocator<int> {"a"}};
+  const vector_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
 
   test_type<int> out {input};
 
@@ -162,7 +164,7 @@ BOOST_AUTO_TEST_CASE(test_copy_from_vector)
 
 BOOST_AUTO_TEST_CASE(test_copy_from_vector_with_alloc)
 {
-  std::vector<int, test_allocator<int>> input {1, 2, 3};
+  vector_type<int> input {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
 
   test_type<int> out {input, in_alloc};
@@ -177,8 +179,7 @@ BOOST_AUTO_TEST_CASE(test_copy_from_vector_with_alloc)
 
 BOOST_AUTO_TEST_CASE(test_move_from_vector)
 {
-  std::vector<int, test_allocator<int>> input {{1, 2, 3},
-                                               test_allocator<int> {"a"}};
+  vector_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
   const auto exp {input};
 
   test_type<int> out {std::move(input)};
@@ -191,7 +192,7 @@ BOOST_AUTO_TEST_CASE(test_move_from_vector)
 
 BOOST_AUTO_TEST_CASE(test_move_from_vector_with_alloc)
 {
-  std::vector<int, test_allocator<int>> input {1, 2, 3};
+  vector_type<int> input {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
   const auto exp = input;
 
@@ -228,7 +229,7 @@ BOOST_AUTO_TEST_CASE(test_from_empty_list)
 
 BOOST_AUTO_TEST_CASE(test_span)
 {
-  std::vector<int> input {1, 2, 3};
+  vector_type<int> input {1, 2, 3};
 
   test_type<int> out {input.data(), input.size()};
 
@@ -241,7 +242,7 @@ BOOST_AUTO_TEST_CASE(test_span)
 
 BOOST_AUTO_TEST_CASE(test_span_with_alloc)
 {
-  std::vector<int> input {1, 2, 3};
+  vector_type<int> input {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
 
   test_type<int> out {input.data(), input.size(), in_alloc};
@@ -256,7 +257,7 @@ BOOST_AUTO_TEST_CASE(test_span_with_alloc)
 
 BOOST_AUTO_TEST_CASE(test_copy_as_span)
 {
-  std::vector<int> in_data {1, 2, 3};
+  vector_type<int> in_data {1, 2, 3};
   const test_type<int> input {
       in_data.data(), in_data.size(), test_allocator<int> {"a"}};
 
@@ -287,7 +288,7 @@ BOOST_AUTO_TEST_CASE(test_copy_as_vector)
 
 BOOST_AUTO_TEST_CASE(test_move_as_span)
 {
-  std::vector<int> in_data {1, 2, 3};
+  vector_type<int> in_data {1, 2, 3};
   std::size_t in_size {2};
   test_allocator<int> in_alloc {"a"};
 
@@ -315,7 +316,7 @@ BOOST_AUTO_TEST_CASE(test_move_as_span)
 
 BOOST_AUTO_TEST_CASE(test_move_as_vector)
 {
-  std::vector<int> in_data {1, 2, 3};
+  vector_type<int> in_data {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
 
   test_type<int> input {in_data.begin(), in_data.end(), in_alloc};
@@ -345,8 +346,8 @@ BOOST_AUTO_TEST_SUITE(test_assignments)
 
 BOOST_AUTO_TEST_CASE(test_copy_span_to_span)
 {
-  std::vector<int> in_data1 {1, 2, 3};
-  std::vector<int> in_data2 {4, 5, 6, 7};
+  vector_type<int> in_data1 {1, 2, 3};
+  vector_type<int> in_data2 {4, 5, 6, 7};
   const test_type<int> input {
       in_data2.data(), in_data2.size(), test_allocator<int> {"a"}};
 
@@ -363,8 +364,8 @@ BOOST_AUTO_TEST_CASE(test_copy_span_to_span)
 
 BOOST_AUTO_TEST_CASE(test_copy_span_to_bigger_vector)
 {
-  std::vector<int> in_data1 {1, 2, 3};
-  std::vector<int> in_data2 {4, 5, 6, 7};
+  vector_type<int> in_data1 {1, 2, 3};
+  vector_type<int> in_data2 {4, 5, 6, 7};
   const test_type<int> input {
       in_data1.data(), in_data1.size(), test_allocator<int> {"a"}};
 
@@ -381,8 +382,8 @@ BOOST_AUTO_TEST_CASE(test_copy_span_to_bigger_vector)
 
 BOOST_AUTO_TEST_CASE(test_copy_span_to_smaller_vector)
 {
-  std::vector<int> in_data1 {1, 2, 3};
-  std::vector<int> in_data2 {4, 5};
+  vector_type<int> in_data1 {1, 2, 3};
+  vector_type<int> in_data2 {4, 5};
   const test_type<int> input {
       in_data1.data(), in_data1.size(), test_allocator<int> {"a"}};
 
@@ -400,7 +401,7 @@ BOOST_AUTO_TEST_CASE(test_copy_span_to_smaller_vector)
 BOOST_AUTO_TEST_CASE(test_copy_vector_to_bigger_span)
 {
   const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
-  std::vector<int> in_data {4, 5, 6, 7};
+  vector_type<int> in_data {4, 5, 6, 7};
 
   test_type<int> out {in_data.data(), in_data.size()};
   out = input;
@@ -419,7 +420,7 @@ BOOST_AUTO_TEST_CASE(test_copy_vector_to_bigger_span)
 BOOST_AUTO_TEST_CASE(test_copy_vector_to_smaller_span)
 {
   const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
-  std::vector<int> in_data {4, 5};
+  vector_type<int> in_data {4, 5};
 
   test_type<int> out {in_data.data(), in_data.size()};
   out = input;
@@ -470,8 +471,8 @@ BOOST_AUTO_TEST_CASE(test_copy_vector_to_smaller_vector)
 
 BOOST_AUTO_TEST_CASE(test_move_span_to_span)
 {
-  std::vector<int> in_data1 {1, 2, 3};
-  std::vector<int> in_data2 {4, 5};
+  vector_type<int> in_data1 {1, 2, 3};
+  vector_type<int> in_data2 {4, 5};
 
   test_allocator<int> in_alloc {"a"};
 
@@ -495,8 +496,8 @@ BOOST_AUTO_TEST_CASE(test_move_span_to_span)
 
 BOOST_AUTO_TEST_CASE(test_move_span_to_vector)
 {
-  std::vector<int> in_data1 {1, 2, 3};
-  std::vector<int> in_data2 {4, 5};
+  vector_type<int> in_data1 {1, 2, 3};
+  vector_type<int> in_data2 {4, 5};
 
   test_allocator<int> in_alloc {"a"};
 
@@ -520,8 +521,8 @@ BOOST_AUTO_TEST_CASE(test_move_span_to_vector)
 
 BOOST_AUTO_TEST_CASE(test_move_vector_to_span)
 {
-  std::vector<int> in_data1 {1, 2, 3};
-  std::vector<int> in_data2 {4, 5};
+  vector_type<int> in_data1 {1, 2, 3};
+  vector_type<int> in_data2 {4, 5};
   const auto in_data2_copy = in_data2;
 
   test_allocator<int> in_alloc {"a"};
@@ -552,8 +553,8 @@ BOOST_AUTO_TEST_CASE(test_move_vector_to_span)
 
 BOOST_AUTO_TEST_CASE(test_move_vector_to_vector)
 {
-  std::vector<int> in_data1 {1, 2, 3};
-  std::vector<int> in_data2 {4, 5};
+  vector_type<int> in_data1 {1, 2, 3};
+  vector_type<int> in_data2 {4, 5};
 
   std::size_t in_capacity {10};
 
@@ -579,6 +580,62 @@ BOOST_AUTO_TEST_CASE(test_move_vector_to_vector)
                     0);
 }
 
+BOOST_AUTO_TEST_CASE(test_copy_std_vector)
+{
+  vector_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
+  input.reserve(10);
+
+  const auto exp = input;
+
+  test_type<int> out;
+  out = input;
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_NE(out.data(), input.data());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), exp.get_allocator().label());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+}
+
+BOOST_AUTO_TEST_CASE(test_move_std_vector)
+{
+  vector_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
+  input.reserve(10);
+  vector_type<int> input2 {{1, 2, 3}, test_allocator<int> {"a"}};
+  input2.reserve(10);
+
+  const auto exp = std::move(input2);
+
+  test_type<int> out;
+  out = std::move(input);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(input.data(), input2.data());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().label(), exp.get_allocator().label());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+}
+
+BOOST_AUTO_TEST_CASE(test_assing_initializer_list)
+{
+  const auto input = {1, 2, 3};
+
+  vector_type<int> exp;
+  exp = input;
+
+  test_type<int> out;
+  out = input;
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+}
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace test_assignments
 

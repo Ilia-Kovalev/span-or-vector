@@ -301,8 +301,7 @@ public:
 
   auto is_vector() const noexcept -> bool { return !is_span_; }
 
-  explicit operator span_type() const& { return *this; }
-  explicit operator vector_type() const&
+  auto to_vector() const -> vector_type
   {
     if (is_vector()) {
       return *this;
@@ -310,7 +309,7 @@ public:
     return {begin(), end()};
   }
 
-  explicit operator vector_type() &&
+  auto move_to_vector() -> vector_type
   {
     vector_type result;
 
@@ -442,13 +441,13 @@ public:
 
   auto operator=(const vector_type& other) -> span_or_vector_assignments&
   {
-    modify_as_vector([&](vector_type& vec) { vec = other; });
+    this->modify_as_vector([&](vector_type& vec) { vec = other; });
     return *this;
   }
 
   auto operator=(vector_type&& other) -> span_or_vector_assignments&
   {
-    modify_as_vector([&](vector_type& vec) { vec = std::move(other); });
+    this->modify_as_vector([&](vector_type& vec) { vec = std::move(other); });
     return *this;
   }
 
@@ -467,7 +466,9 @@ public:
   template<class InputIt>
   void assign(InputIt first, InputIt last)
   {
-    this->resize(std::distance(first, last));
+    assert(first <= last);
+
+    this->resize(static_cast<size_type>(std::distance(first, last)));
     std::copy(first, last, this->begin());
   }
 
@@ -733,7 +734,8 @@ public:
 
   using base::is_span;
   using base::is_vector;
-  using base::operator vector_type;
+  using base::move_to_vector;
+  using base::to_vector;
 
   using base::capacity;
   using base::empty;
