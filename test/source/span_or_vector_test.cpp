@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#define BOOST_TEST_MODULE test span_or_vector
+#define BOOST_TEST_MODULE span_or_vector
 
 #include "span_or_vector/span_or_vector.hpp"
 
@@ -91,12 +91,12 @@ template<class T>
 using vector_type = std::vector<T, test_allocator<T>>;
 
 // NOLINTBEGIN
-namespace test_constructors
+namespace constructors
 {
 // cppcheck-suppress unknownMacro
-BOOST_AUTO_TEST_SUITE(test_constructors)
+BOOST_AUTO_TEST_SUITE(constructors)
 
-BOOST_AUTO_TEST_CASE(test_default)
+BOOST_AUTO_TEST_CASE(default_constructor)
 {
   test_type<int> out;
 
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(test_default)
   BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
 }  // namespace span_or_vector
 
-BOOST_AUTO_TEST_CASE(test_alloc)
+BOOST_AUTO_TEST_CASE(alloc)
 {
   test_allocator<int> in_alloc {"a"};
 
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(test_alloc)
   BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
 }
 
-BOOST_AUTO_TEST_CASE(test_count_value_alloc)
+BOOST_AUTO_TEST_CASE(count_value_alloc)
 {
   const vector_type<int> input(3, 0);
   test_allocator<int> in_alloc {"a"};
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(test_count_value_alloc)
   BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
 }
 
-BOOST_AUTO_TEST_CASE(test_first_last_alloc)
+BOOST_AUTO_TEST_CASE(first_last_alloc)
 {
   const vector_type<int> input {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(test_first_last_alloc)
   BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_from_vector)
+BOOST_AUTO_TEST_CASE(copy_vector)
 {
   const vector_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
 
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(test_copy_from_vector)
   BOOST_CHECK_NE(out.data(), input.data());
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_from_vector_with_alloc)
+BOOST_AUTO_TEST_CASE(copy_vector_with_alloc)
 {
   vector_type<int> input {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(test_copy_from_vector_with_alloc)
   BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
 }
 
-BOOST_AUTO_TEST_CASE(test_move_from_vector)
+BOOST_AUTO_TEST_CASE(move_vector)
 {
   vector_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
   const auto exp {input};
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(test_move_from_vector)
   BOOST_CHECK_EQUAL(out.get_allocator().label(), exp.get_allocator().label());
 }
 
-BOOST_AUTO_TEST_CASE(test_move_from_vector_with_alloc)
+BOOST_AUTO_TEST_CASE(move_vector_with_alloc)
 {
   vector_type<int> input {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(test_move_from_vector_with_alloc)
   BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
 }
 
-BOOST_AUTO_TEST_CASE(test_from_init_list)
+BOOST_AUTO_TEST_CASE(ilist)
 {
   auto const input = {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
@@ -218,16 +218,16 @@ BOOST_AUTO_TEST_CASE(test_from_init_list)
   BOOST_CHECK_EQUAL(out.get_allocator().label(), in_alloc.label());
 }
 
-BOOST_AUTO_TEST_CASE(test_from_empty_list)
+BOOST_AUTO_TEST_CASE(empty_ilist)
 {
-  test_type<int> out {};
+  test_type<int> out {{}};
 
   BOOST_CHECK(out.is_vector());
   BOOST_CHECK(out.empty());
   BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
 }
 
-BOOST_AUTO_TEST_CASE(test_span)
+BOOST_AUTO_TEST_CASE(as_span)
 {
   vector_type<int> input {1, 2, 3};
 
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(test_span)
   BOOST_CHECK_EQUAL(out.capacity(), input.size());
 }
 
-BOOST_AUTO_TEST_CASE(test_span_with_alloc)
+BOOST_AUTO_TEST_CASE(as_span_with_alloc)
 {
   vector_type<int> input {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(test_span_with_alloc)
   BOOST_CHECK_EQUAL(out.capacity(), input.size());
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_as_span)
+BOOST_AUTO_TEST_CASE(copy_sov_is_span)
 {
   vector_type<int> in_data {1, 2, 3};
   const test_type<int> input {
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(test_copy_as_span)
   BOOST_CHECK_EQUAL(input.get_allocator().label(), out.get_allocator().label());
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_as_vector)
+BOOST_AUTO_TEST_CASE(copy_sov_is_vector)
 {
   const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
 
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(test_copy_as_vector)
   BOOST_CHECK_NE(input.data(), out.data());
 }
 
-BOOST_AUTO_TEST_CASE(test_move_as_span)
+BOOST_AUTO_TEST_CASE(move_sov_is_span)
 {
   vector_type<int> in_data {1, 2, 3};
   std::size_t in_size {2};
@@ -314,7 +314,7 @@ BOOST_AUTO_TEST_CASE(test_move_as_span)
   BOOST_CHECK_EQUAL(input.get_allocator().label(), "");
 }
 
-BOOST_AUTO_TEST_CASE(test_move_as_vector)
+BOOST_AUTO_TEST_CASE(move_sov_is_vector)
 {
   vector_type<int> in_data {1, 2, 3};
   test_allocator<int> in_alloc {"a"};
@@ -336,15 +336,15 @@ BOOST_AUTO_TEST_CASE(test_move_as_vector)
   BOOST_CHECK_EQUAL(input.get_allocator().label(), "");
 }
 BOOST_AUTO_TEST_SUITE_END()
-}  // namespace test_constructors
+}  // namespace constructors
 
-namespace test_assignments
+namespace assignments
 {
 
 // cppcheck-suppress unknownMacro
-BOOST_AUTO_TEST_SUITE(test_assignments)
+BOOST_AUTO_TEST_SUITE(assignments)
 
-BOOST_AUTO_TEST_CASE(test_copy_span_to_span)
+BOOST_AUTO_TEST_CASE(copy_sov_as_span_to_span)
 {
   vector_type<int> in_data1 {1, 2, 3};
   vector_type<int> in_data2 {4, 5, 6, 7};
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(test_copy_span_to_span)
   BOOST_CHECK_NE(out.data(), input.data());
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_span_to_bigger_vector)
+BOOST_AUTO_TEST_CASE(copy_sov_as_span_to_bigger_vector)
 {
   vector_type<int> in_data1 {1, 2, 3};
   vector_type<int> in_data2 {4, 5, 6, 7};
@@ -380,7 +380,7 @@ BOOST_AUTO_TEST_CASE(test_copy_span_to_bigger_vector)
   BOOST_CHECK_NE(out.data(), input.data());
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_span_to_smaller_vector)
+BOOST_AUTO_TEST_CASE(copy_sov_as_span_to_smaller_vector)
 {
   vector_type<int> in_data1 {1, 2, 3};
   vector_type<int> in_data2 {4, 5};
@@ -398,7 +398,7 @@ BOOST_AUTO_TEST_CASE(test_copy_span_to_smaller_vector)
   BOOST_CHECK_NE(out.data(), input.data());
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_vector_to_bigger_span)
+BOOST_AUTO_TEST_CASE(copy_sov_as_vector_to_bigger_span)
 {
   const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
   vector_type<int> in_data {4, 5, 6, 7};
@@ -417,7 +417,7 @@ BOOST_AUTO_TEST_CASE(test_copy_vector_to_bigger_span)
   BOOST_CHECK_EQUAL(out.data(), in_data.data());
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_vector_to_smaller_span)
+BOOST_AUTO_TEST_CASE(copy_sov_as_vector_to_smaller_span)
 {
   const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
   vector_type<int> in_data {4, 5};
@@ -435,7 +435,7 @@ BOOST_AUTO_TEST_CASE(test_copy_vector_to_smaller_span)
   BOOST_CHECK_NE(out.data(), input.data());
   BOOST_CHECK_NE(out.data(), in_data.data());
 }
-BOOST_AUTO_TEST_CASE(test_copy_vector_to_larger_vector)
+BOOST_AUTO_TEST_CASE(copy_sov_as_vector_to_bigger_vector)
 {
   const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
 
@@ -452,7 +452,7 @@ BOOST_AUTO_TEST_CASE(test_copy_vector_to_larger_vector)
   BOOST_CHECK_NE(out.data(), input.data());
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_vector_to_smaller_vector)
+BOOST_AUTO_TEST_CASE(copy_sov_as_vector_to_smaller_vector)
 {
   const test_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
 
@@ -469,7 +469,7 @@ BOOST_AUTO_TEST_CASE(test_copy_vector_to_smaller_vector)
   BOOST_CHECK_NE(out.data(), input.data());
 }
 
-BOOST_AUTO_TEST_CASE(test_move_span_to_span)
+BOOST_AUTO_TEST_CASE(move_sov_as_span_to_span)
 {
   vector_type<int> in_data1 {1, 2, 3};
   vector_type<int> in_data2 {4, 5};
@@ -494,7 +494,7 @@ BOOST_AUTO_TEST_CASE(test_move_span_to_span)
   BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
 }
 
-BOOST_AUTO_TEST_CASE(test_move_span_to_vector)
+BOOST_AUTO_TEST_CASE(move_sov_as_span_to_vector)
 {
   vector_type<int> in_data1 {1, 2, 3};
   vector_type<int> in_data2 {4, 5};
@@ -519,7 +519,7 @@ BOOST_AUTO_TEST_CASE(test_move_span_to_vector)
   BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
 }
 
-BOOST_AUTO_TEST_CASE(test_move_vector_to_span)
+BOOST_AUTO_TEST_CASE(move_sov_as_vector_to_span)
 {
   vector_type<int> in_data1 {1, 2, 3};
   vector_type<int> in_data2 {4, 5};
@@ -551,7 +551,7 @@ BOOST_AUTO_TEST_CASE(test_move_vector_to_span)
                                 in_data2_copy.end());
 }
 
-BOOST_AUTO_TEST_CASE(test_move_vector_to_vector)
+BOOST_AUTO_TEST_CASE(move_sov_as_vector_to_vector)
 {
   vector_type<int> in_data1 {1, 2, 3};
   vector_type<int> in_data2 {4, 5};
@@ -580,7 +580,7 @@ BOOST_AUTO_TEST_CASE(test_move_vector_to_vector)
                     0);
 }
 
-BOOST_AUTO_TEST_CASE(test_copy_std_vector)
+BOOST_AUTO_TEST_CASE(copy_vector)
 {
   vector_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
   input.reserve(10);
@@ -599,7 +599,7 @@ BOOST_AUTO_TEST_CASE(test_copy_std_vector)
                     exp.get_allocator().n_allocations());
 }
 
-BOOST_AUTO_TEST_CASE(test_move_std_vector)
+BOOST_AUTO_TEST_CASE(move_vector)
 {
   vector_type<int> input {{1, 2, 3}, test_allocator<int> {"a"}};
   input.reserve(10);
@@ -620,7 +620,7 @@ BOOST_AUTO_TEST_CASE(test_move_std_vector)
                     exp.get_allocator().n_allocations());
 }
 
-BOOST_AUTO_TEST_CASE(test_assing_initializer_list)
+BOOST_AUTO_TEST_CASE(ilist)
 {
   const auto input = {1, 2, 3};
 
@@ -637,7 +637,7 @@ BOOST_AUTO_TEST_CASE(test_assing_initializer_list)
                     exp.get_allocator().n_allocations());
 }
 BOOST_AUTO_TEST_SUITE_END()
-}  // namespace test_assignments
+}  // namespace assignments
 
 // NOLINTEND
 
