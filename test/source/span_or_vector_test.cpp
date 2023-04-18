@@ -975,6 +975,52 @@ BOOST_AUTO_TEST_CASE(reserve_as_vector)
   BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
 }
 
+BOOST_AUTO_TEST_CASE(shrink_to_fit_as_span)
+{
+  vector_type<int> input {1, 2, 3};
+  const std::size_t in_size {2};
+
+  test_type<int> out {input.data(), input.size()};
+
+  out.shrink_to_fit();
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), input.size());
+
+  out.resize(in_size);
+  out.shrink_to_fit();
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), in_size);
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.begin() + in_size);
+}
+
+BOOST_AUTO_TEST_CASE(shrink_to_fit_as_vector)
+{
+  vector_type<int> input {1, 2, 3};
+  const std::size_t in_size {2};
+
+  test_type<int> out {input};
+  vector_type<int> exp {input};
+
+  out.shrink_to_fit();
+  exp.shrink_to_fit();
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+
+  out.resize(in_size);
+  exp.resize(in_size);
+
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace capacity
 
