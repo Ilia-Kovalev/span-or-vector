@@ -649,6 +649,174 @@ BOOST_AUTO_TEST_CASE(ilist)
   BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
                     exp.get_allocator().n_allocations());
 }
+
+BOOST_AUTO_TEST_CASE(assign_count_value_to_small_span)
+{
+  vector_type<int> input {1, 2, 3};
+  const int in_value = 10;
+  const std::size_t in_count = 5;
+
+  vector_type<int> exp {input};
+  exp.assign(in_count, in_value);
+
+  test_type<int> out {input.data(), input.size()};
+  out.assign(in_count, in_value);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(assign_count_value_to_large_span)
+{
+  vector_type<int> input {1, 2, 3};
+  const int in_value = 10;
+  const std::size_t in_count = 2;
+  const std::size_t in_size = 1;
+
+  vector_type<int> exp {input};
+  exp.resize(in_size);
+  exp.assign(in_count, in_value);
+
+  test_type<int> out {input.data(), input.size()};
+  out.resize(in_size);
+  out.assign(in_count, in_value);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(assign_count_value_to_vector)
+{
+  const vector_type<int> input {1, 2, 3};
+  const int in_value = 10;
+  const std::size_t in_count = 5;
+
+  vector_type<int> exp {input};
+  exp.assign(in_count, in_value);
+
+  test_type<int> out {input};
+  out.assign(in_count, in_value);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+}
+
+BOOST_AUTO_TEST_CASE(assign_first_last_to_small_span)
+{
+  vector_type<int> input {1, 2, 3};
+  const std::initializer_list<int> in_data_to_assign {5, 6, 7, 8};
+
+  vector_type<int> exp {input};
+  exp.assign(in_data_to_assign.begin(), in_data_to_assign.end());
+
+  test_type<int> out {input.data(), input.size()};
+  out.assign(in_data_to_assign.begin(), in_data_to_assign.end());
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(assign_first_last_to_large_span)
+{
+  vector_type<int> input {1, 2, 3};
+  const std::initializer_list<int> in_data_to_assign {5, 6};
+  const std::size_t in_size = 1;
+
+  vector_type<int> exp {input};
+  exp.resize(in_size);
+  exp.assign(in_data_to_assign.begin(), in_data_to_assign.end());
+
+  test_type<int> out {input.data(), input.size()};
+  out.resize(in_size);
+  out.assign(in_data_to_assign.begin(), in_data_to_assign.end());
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(assign_first_last_to_vector)
+{
+  const vector_type<int> input {1, 2, 3};
+  const std::initializer_list<int> in_data_to_assign {5, 6};
+
+  vector_type<int> exp {input};
+  exp.assign(in_data_to_assign.begin(), in_data_to_assign.end());
+
+  test_type<int> out {input};
+  out.assign(in_data_to_assign.begin(), in_data_to_assign.end());
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+}
+
+BOOST_AUTO_TEST_CASE(assign_ilist_to_small_span)
+{
+  vector_type<int> input {1, 2, 3};
+  const std::initializer_list<int> in_data_to_assign {5, 6, 7, 8};
+
+  vector_type<int> exp {input};
+  exp.assign(in_data_to_assign);
+
+  test_type<int> out {input.data(), input.size()};
+  out.assign(in_data_to_assign);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(assign_ilist_to_large_span)
+{
+  vector_type<int> input {1, 2, 3};
+  const std::initializer_list<int> in_data_to_assign {5, 6};
+  const std::size_t in_size = 1;
+
+  vector_type<int> exp {input};
+  exp.resize(in_size);
+  exp.assign(in_data_to_assign);
+
+  test_type<int> out {input.data(), input.size()};
+  out.resize(in_size);
+  out.assign(in_data_to_assign);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(assign_ilist_to_vector)
+{
+  const vector_type<int> input {1, 2, 3};
+  const std::initializer_list<int> in_data_to_assign {5, 6};
+
+  vector_type<int> exp {input};
+  exp.assign(in_data_to_assign);
+
+  test_type<int> out {input};
+  out.assign(in_data_to_assign);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+}
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace assignments
 

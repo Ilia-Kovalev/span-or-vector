@@ -284,6 +284,11 @@ public:
       return;
     }
 
+    if (count <= size()) {
+      span_type::operator=(span_type::first(count));
+      return;
+    }
+
     if (count <= span_capacity_) {
       const auto old_end = end();
       span_type::operator=({data(), count});
