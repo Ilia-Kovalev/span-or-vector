@@ -1025,6 +1025,43 @@ BOOST_AUTO_TEST_CASE(shrink_to_fit_as_vector)
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace capacity
 
+namespace modifiers
+{
+BOOST_AUTO_TEST_SUITE(modifiers)
+
+BOOST_AUTO_TEST_CASE(clear_as_span)
+{
+  vector_type<int> input {1, 2, 3};
+
+  test_type<int> out {input.data(), input.size()};
+
+  out.clear();
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK(out.empty());
+  BOOST_CHECK_EQUAL(out.capacity(), input.size());
+}
+
+BOOST_AUTO_TEST_CASE(clear_as_vector)
+{
+  vector_type<int> input {1, 2, 3};
+
+  test_type<int> out {input};
+  vector_type<int> exp {input};
+
+  out.clear();
+  exp.clear();
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+}  // namespace modifiers
+
 // NOLINTEND
 
 }  // namespace span_or_vector
