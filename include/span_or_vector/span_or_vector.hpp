@@ -464,17 +464,26 @@ public:
 
   void assign(size_type count, const T& value)
   {
-    this->resize(count, value);
-    std::fill_n(this->begin(), count, value);
+    if (this->is_vector()) {
+      this->modify_as_vector([&](vector_type& vec)
+                             { vec.assign(count, value); });
+    } else {
+      this->resize(count, value);
+      std::fill_n(this->begin(), count, value);
+    }
   }
 
   template<class InputIt>
   void assign(InputIt first, InputIt last)
   {
     assert(first <= last);
-
-    this->resize(static_cast<size_type>(std::distance(first, last)));
-    std::copy(first, last, this->begin());
+    if (this->is_vector()) {
+      this->modify_as_vector([&](vector_type& vec)
+                             { vec.assign(first, last); });
+    } else {
+      this->resize(static_cast<size_type>(std::distance(first, last)));
+      std::copy(first, last, this->begin());
+    }
   }
 
   void assign(std::initializer_list<T> ilist)
