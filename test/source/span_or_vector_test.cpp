@@ -220,7 +220,8 @@ BOOST_AUTO_TEST_CASE(ilist)
 
 BOOST_AUTO_TEST_CASE(empty_ilist)
 {
-  test_type<int> out {{}};
+  const std::initializer_list<int> input = {};
+  test_type<int> out {input};
 
   BOOST_CHECK(out.is_vector());
   BOOST_CHECK(out.empty());
