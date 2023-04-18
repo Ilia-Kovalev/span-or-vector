@@ -17,7 +17,7 @@ endif()
 
 # ---- Tests ----
 
-add_executable(span_or_vector_test source/span_or_vector_test.cpp)
+add_executable(span_or_vector_test "source/span_or_vector.cpp")
 target_link_libraries(span_or_vector_test PRIVATE span_or_vector::span_or_vector Boost::unit_test_framework)
 target_compile_features(span_or_vector_test PRIVATE cxx_std_11)
 
