@@ -90,7 +90,9 @@ using test_type = span_or_vector<T, test_allocator<T>>;
 template<class T>
 using vector_type = std::vector<T, test_allocator<T>>;
 
-// NOLINTBEGIN
+// NOLINTBEGIN(bugprone-use-after-move, hicpp-invalid-access-moved,
+// clang-diagnostic-self-assign-overloaded,cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+
 namespace constructors
 {
 // cppcheck-suppress unknownMacro
@@ -1059,9 +1061,28 @@ BOOST_AUTO_TEST_CASE(clear_as_vector)
   BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
 }
 
+BOOST_AUTO_TEST_CASE(insert_pos_value_as_span_with_enough_capacity)
+{
+  vector_type<int> input {1, 2, 3};
+  auto exp = input;
+
+  test_type<int> out {input.data(), input.size()};
+
+  exp.resize(2);
+  out.resize(2);
+
+  out.insert(out.begin() + 1, 6);
+  exp.insert(exp.begin() + 1, 6);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), input.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace modifiers
 
-// NOLINTEND
+// NOLINTEND(bugprone-use-after-move, hicpp-invalid-access-moved,
+// clang-diagnostic-self-assign-overloaded,cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
 }  // namespace span_or_vector

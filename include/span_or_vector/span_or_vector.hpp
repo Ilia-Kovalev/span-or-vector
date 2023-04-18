@@ -56,17 +56,17 @@ namespace span_or_vector
 {
 namespace detail
 {
+template<class Iter>
+auto forward_into(Iter iter) -> Iter
+{
+  return iter;
+}
+
 template<class Iter, class H, class... Tail>
 auto forward_into(Iter iter, H&& head, Tail&&... tail) -> Iter
 {
   *iter++ = std::forward<H>(head);
   return forward_into(iter, std::forward<Tail>(tail)...);
-}
-
-template<class Iter>
-auto forward_into(Iter iter) -> Iter
-{
-  return iter;
 }
 
 template<class T, class Allocator>
@@ -362,6 +362,34 @@ public:
 
   void switch_to_empty_vector() { switch_to_empty_vector(span_capacity_); }
 
+  auto to_vector_iterator(iterator iter) noexcept ->
+      typename vector_type::iterator
+  {
+    assert(is_vector());
+    return vector_type::begin() + (iter - begin());
+  }
+
+  auto to_vector_iterator(const_iterator iter) const noexcept ->
+      typename vector_type::const_iterator
+  {
+    assert(is_vector());
+    return vector_type::begin() + (iter - begin());
+  }
+
+  auto to_iterator(typename vector_type::iterator iter) const noexcept
+      -> iterator
+  {
+    assert(is_vector());
+    return &*iter;
+  }
+
+  auto to_iterator(typename vector_type::const_iterator iter) const noexcept
+      -> const_iterator
+  {
+    assert(is_vector());
+    return &*iter;
+  }
+
 private:
   void update_span()
   {
@@ -590,7 +618,7 @@ public:
 
     return insert_into_span(pos,
                             count,
-                            [&](iterator iter) -> iterator
+                            [&](const_iterator iter) -> iterator
                             { return std::fill_n(iter, count, value); });
   }
 
@@ -605,7 +633,7 @@ public:
 
     return insert_into_span(pos,
                             std::distance(first, last),
-                            [&](iterator iter) -> iterator
+                            [&](const_iterator iter) -> iterator
                             { return std::copy(first, last, iter); });
   }
 
@@ -618,9 +646,13 @@ public:
   auto emplace(const_iterator pos, Args&&... args) -> iterator
   {
     if (this->is_vector()) {
-      return modify_as_vector_with_return(
+      return this->modify_as_vector_with_return(
           [&](vector_type& vec) -> iterator
-          { return vec.emplace(pos, std::forward<Args>(args)...); });
+          {
+            const auto result = vec.emplace(this->to_vector_iterator(pos),
+                                            std::forward<Args>(args)...);
+            return this->to_iterator(result);
+          });
     }
 
     return insert_into_span(
@@ -663,34 +695,39 @@ private:
                         size_type count,
                         FillInsertedValues&& fill) -> iterator
   {
-    static_assert(
-        std::is_same<
-            typename std::result_of<FillInsertedValues(const_iterator)>::type,
-            iterator>::value,
-        "Wrong callable type");
-
     assert(this->is_span());
+    assert(this->size() + count <= this->capacity());
 
+    // We modify the container and a value pointed by `pos` anyway
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+    const auto iter = const_cast<iterator>(pos);
+
+    // We use pointers as random access iterators here
+    // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     const auto new_size = this->size() + count;
     if (new_size <= this->capacity()) {
       this->resize(new_size);
-      std::move_backward(pos, pos + count, pos + count);
-      auto out_it = fill(pos);
-      assert(out_it == pos + count);
-      return pos;
+      std::move_backward(iter, iter + count, this->end());
+      const auto out_it = fill(iter);
+      assert(out_it == iter + count);
+      (void)(out_it);
+      return iter;
     }
 
-    return modify_as_vector_with_return(
+    return this->modify_as_vector_with_return(
         [&](vector_type& vec) -> iterator
         {
           vec.resize(new_size);
-          auto out_it = std::copy(this->begin(), pos, vec.begin());
+          auto out_it =
+              this->to_iterator(std::copy(this->begin(), iter, vec.begin()));
           auto const result = out_it;
           out_it = fill(out_it);
           assert(out_it == result + count);
-          std::copy(pos, this->end(), out_it);
+          std::copy(iter, this->end(), out_it);
           return result;
         });
+
+    // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
   }
 };
 
