@@ -859,6 +859,42 @@ BOOST_AUTO_TEST_CASE(at_out_of_range)
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace element_access
 
+namespace capacity
+{
+BOOST_AUTO_TEST_SUITE(capacity)
+
+BOOST_AUTO_TEST_CASE(empty_as_span)
+{
+  vector_type<int> input {1, 2, 3};
+
+  const test_type<int> out {input.data(), 0};
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK(out.empty());
+}
+
+BOOST_AUTO_TEST_CASE(empty_as_span_after_resize)
+{
+  vector_type<int> input {1, 2, 3};
+
+  test_type<int> out {input.data(), input.size()};
+  out.resize(0);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK(out.empty());
+}
+
+BOOST_AUTO_TEST_CASE(empty_as_vector)
+{
+  const test_type<int> out;
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK(out.empty());
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+}  // namespace capacity
+
 // NOLINTEND
 
 }  // namespace span_or_vector
