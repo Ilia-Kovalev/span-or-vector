@@ -947,6 +947,7 @@ BOOST_AUTO_TEST_CASE(reserve_as_span)
   BOOST_CHECK(out.is_vector());
   BOOST_CHECK_EQUAL(out.size(), input.size());
   BOOST_CHECK_EQUAL(out.capacity(), new_cap);
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
 }
 
 BOOST_AUTO_TEST_CASE(reserve_as_vector)
