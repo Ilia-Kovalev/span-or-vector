@@ -345,6 +345,18 @@ namespace assignments
 // cppcheck-suppress unknownMacro
 BOOST_AUTO_TEST_SUITE(assignments)
 
+BOOST_AUTO_TEST_CASE(self_assignment)
+{
+  test_type<int> input {1, 2, 3};
+  test_type<int> expected {1, 2, 3};
+  input = input;
+
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      input.begin(), input.end(), expected.begin(), expected.end());
+  BOOST_CHECK_EQUAL(input.get_allocator().n_allocations(),
+                    expected.get_allocator().n_allocations());
+}
+
 BOOST_AUTO_TEST_CASE(copy_sov_as_span_to_span)
 {
   vector_type<int> in_data1 {1, 2, 3};
