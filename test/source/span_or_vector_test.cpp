@@ -892,6 +892,24 @@ BOOST_AUTO_TEST_CASE(empty_as_vector)
   BOOST_CHECK(out.empty());
 }
 
+BOOST_AUTO_TEST_CASE(size_as_span)
+{
+  vector_type<int> input {1, 2, 3};
+
+  const test_type<int> out {input.data(), input.size()};
+
+  BOOST_CHECK_EQUAL(out.size(), input.size());
+}
+
+BOOST_AUTO_TEST_CASE(size_as_vector)
+{
+  vector_type<int> input {1, 2, 3};
+
+  const test_type<int> out {input};
+
+  BOOST_CHECK_EQUAL(out.size(), input.size());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace capacity
 
