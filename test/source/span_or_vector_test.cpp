@@ -928,6 +928,53 @@ BOOST_AUTO_TEST_CASE(max_size_as_vector)
   BOOST_CHECK_EQUAL(out.max_size(), input.max_size());
 }
 
+BOOST_AUTO_TEST_CASE(reserve_as_span)
+{
+  vector_type<int> input {1, 2, 3};
+  std::size_t new_cap {10};
+
+  test_type<int> out {input.data(), input.size()};
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), input.size());
+
+  out.reserve(input.size());
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.size(), input.size());
+  BOOST_CHECK_EQUAL(out.capacity(), input.size());
+
+  out.reserve(new_cap);
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.size(), input.size());
+  BOOST_CHECK_EQUAL(out.capacity(), new_cap);
+}
+
+BOOST_AUTO_TEST_CASE(reserve_as_vector)
+{
+  const auto input = {1, 2, 3};
+
+  vector_type<int> exp {input};
+  std::size_t new_cap {10};
+
+  test_type<int> out {input};
+
+  exp.reserve(exp.size());
+  out.reserve(out.size());
+
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+
+  exp.reserve(new_cap);
+  out.reserve(new_cap);
+
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace capacity
 
