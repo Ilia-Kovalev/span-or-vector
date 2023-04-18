@@ -544,7 +544,7 @@ private:
     if (pos >= this->size()) {
       throw std::out_of_range(std::string("span_or_vector::at : Position ")
                               + std::to_string(pos) + " is out of range [0, "
-                              + this->size() + ")");
+                              + std::to_string(this->size()) + ")");
     }
   }
 };

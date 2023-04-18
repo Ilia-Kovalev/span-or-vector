@@ -820,6 +820,45 @@ BOOST_AUTO_TEST_CASE(assign_ilist_to_vector)
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace assignments
 
+namespace element_access
+{
+BOOST_AUTO_TEST_SUITE(element_access)
+
+BOOST_AUTO_TEST_CASE(at_as_span)
+{
+  vector_type<int> input {1, 2, 3};
+
+  test_type<int> out {input.data(), input.size()};
+  out.at(1) = 10;
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+}
+
+BOOST_AUTO_TEST_CASE(at_as_vector)
+{
+  vector_type<int> input {1, 2, 3};
+  const std::size_t in_i {1};
+  const int in_val {10};
+
+  test_type<int> out {input};
+  out.at(in_i) = in_val;
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.at(in_i), in_val);
+}
+
+BOOST_AUTO_TEST_CASE(at_out_of_range)
+{
+  const test_type<int> input {1, 2, 3};
+
+  BOOST_CHECK_THROW(input.at(input.size() + 10), std::out_of_range);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+}  // namespace element_access
+
 // NOLINTEND
 
 }  // namespace span_or_vector
