@@ -193,7 +193,10 @@ public:
   {
   }
 
-  template<class InputIt>
+  template<class InputIt,
+           typename = std::enable_if<std::is_same<
+               typename std::iterator_traits<InputIt>::iterator_category,
+               std::input_iterator_tag>::value>>
   span_or_vector_base(InputIt first,
                       InputIt last,
                       const Allocator& alloc = Allocator())
@@ -339,6 +342,14 @@ public:
     const auto result = operation(*this);
     update_span();
     return result;
+  }
+
+  template<class F>
+  auto modify_as_vector_with_iterator_return(F&& operation) -> iterator
+  {
+    const typename vector_type::iterator result =
+        modify_as_vector_with_return(std::forward<F>(operation));
+    return to_span_iterator(result);
   }
 
   void switch_to_vector(size_type capacity)
@@ -501,7 +512,10 @@ public:
     }
   }
 
-  template<class InputIt>
+  template<class InputIt,
+           typename = std::enable_if<std::is_same<
+               typename std::iterator_traits<InputIt>::iterator_category,
+               std::input_iterator_tag>::value>>
   void assign(InputIt first, InputIt last)
   {
     assert(first <= last);
@@ -611,29 +625,33 @@ public:
   auto insert(const_iterator pos, size_type count, const T& value) -> iterator
   {
     if (this->is_vector()) {
-      return modify_as_vector_with_return(
-          [&](vector_type& vec) -> iterator
-          { return vec.insert(pos, count, value); });
+      return this->modify_as_vector_with_iterator_return(
+          [&](vector_type& vec) -> typename vector_type::iterator
+          { return vec.insert(this->to_vector_iterator(pos), count, value); });
     }
 
     return insert_into_span(pos,
                             count,
-                            [&](const_iterator iter) -> iterator
+                            [&](iterator iter) -> iterator
                             { return std::fill_n(iter, count, value); });
   }
 
-  template<class InputIt>
+  template<class InputIt,
+           typename = std::enable_if<std::is_same<
+               typename std::iterator_traits<InputIt>::iterator_category,
+               std::input_iterator_tag>::value>>
   auto insert(const_iterator pos, InputIt first, InputIt last) -> iterator
   {
     if (this->is_vector()) {
-      return modify_as_vector_with_return(
-          [&](vector_type& vec) -> iterator
-          { return vec.insert(pos, first, last); });
+      return this->modify_as_vector_with_iterator_return(
+          [&](vector_type& vec) -> typename vector_type::iterator
+          { return vec.insert(this->to_vector_iterator(pos), first, last); });
     }
 
+    assert(first <= last);
     return insert_into_span(pos,
-                            std::distance(first, last),
-                            [&](const_iterator iter) -> iterator
+                            static_cast<std::size_t>(last - first),
+                            [&](iterator iter) -> iterator
                             { return std::copy(first, last, iter); });
   }
 
@@ -646,12 +664,11 @@ public:
   auto emplace(const_iterator pos, Args&&... args) -> iterator
   {
     if (this->is_vector()) {
-      return this->modify_as_vector_with_return(
-          [&](vector_type& vec) -> iterator
+      return this->modify_as_vector_with_iterator_return(
+          [&](vector_type& vec) -> typename vector_type::iterator
           {
-            const auto result = vec.emplace(this->to_vector_iterator(pos),
-                                            std::forward<Args>(args)...);
-            return this->to_span_iterator(result);
+            return vec.emplace(this->to_vector_iterator(pos),
+                               std::forward<Args>(args)...);
           });
     }
 
@@ -696,36 +713,39 @@ private:
                         FillInsertedValues&& fill) -> iterator
   {
     assert(this->is_span());
-    assert(this->size() + count <= this->capacity());
+    assert(pos >= this->begin());
+    assert(pos <= this->end());
 
-    // We modify the container and a value pointed by `pos` anyway
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
-    const auto iter = const_cast<iterator>(pos);
+    const auto pos_as_index = pos - this->begin();
+    auto non_const_pos = this->begin() + pos_as_index;
 
     // We use pointers as random access iterators here
     // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     const auto new_size = this->size() + count;
     if (new_size <= this->capacity()) {
+      const auto old_end = this->cend();
       this->resize(new_size);
-      std::move_backward(iter, iter + count, this->end());
-      const auto out_it = fill(iter);
-      assert(out_it == iter + count);
-      (void)(out_it);
-      return iter;
+      std::move_backward(pos, old_end, this->end());
+    } else {
+      this->modify_as_vector(
+          [&](vector_type& vec)
+          {
+            vec.resize(new_size);
+            auto vec_it = std::copy(this->cbegin(), pos, vec.begin());
+            vec_it +=
+                static_cast<typename vector_type::iterator::difference_type>(
+                    count);
+            std::copy(pos, this->cend(), vec_it);
+          });
+      non_const_pos = this->begin() + pos_as_index;
     }
 
-    return this->modify_as_vector_with_return(
-        [&](vector_type& vec) -> iterator
-        {
-          vec.resize(new_size);
-          auto out_it = this->to_span_iterator(
-              std::copy(this->begin(), iter, vec.begin()));
-          auto const result = out_it;
-          out_it = fill(out_it);
-          assert(out_it == result + count);
-          std::copy(iter, this->end(), out_it);
-          return result;
-        });
+    const auto out_it = fill(non_const_pos);
+
+    assert(out_it == non_const_pos + count);
+    (void)(out_it);
+
+    return non_const_pos;
 
     // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
   }
