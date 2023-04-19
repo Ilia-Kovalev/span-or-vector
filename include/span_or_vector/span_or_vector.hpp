@@ -376,18 +376,18 @@ public:
     return vector_type::begin() + (iter - begin());
   }
 
-  auto to_iterator(typename vector_type::iterator iter) const noexcept
+  auto to_span_iterator(typename vector_type::iterator iter) const noexcept
       -> iterator
   {
     assert(is_vector());
-    return &*iter;
+    return begin() + (iter - vector_type::begin());
   }
 
-  auto to_iterator(typename vector_type::const_iterator iter) const noexcept
-      -> const_iterator
+  auto to_span_iterator(typename vector_type::const_iterator iter)
+      const noexcept -> const_iterator
   {
     assert(is_vector());
-    return &*iter;
+    return begin() + (iter - vector_type::begin());
   }
 
 private:
@@ -651,7 +651,7 @@ public:
           {
             const auto result = vec.emplace(this->to_vector_iterator(pos),
                                             std::forward<Args>(args)...);
-            return this->to_iterator(result);
+            return this->to_span_iterator(result);
           });
     }
 
@@ -718,8 +718,8 @@ private:
         [&](vector_type& vec) -> iterator
         {
           vec.resize(new_size);
-          auto out_it =
-              this->to_iterator(std::copy(this->begin(), iter, vec.begin()));
+          auto out_it = this->to_span_iterator(
+              std::copy(this->begin(), iter, vec.begin()));
           auto const result = out_it;
           out_it = fill(out_it);
           assert(out_it == result + count);
