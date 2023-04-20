@@ -1438,6 +1438,164 @@ BOOST_AUTO_TEST_CASE(emplace_as_vector)
   BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
 }
 
+BOOST_AUTO_TEST_CASE(erase_pos_as_span)
+{
+  vector_type<int> input {1, 2, 3, 4, 5};
+  auto exp = input;
+
+  test_type<int> out {input.data(), input.size()};
+
+  auto out_it = out.erase(out.begin());
+  auto exp_it = exp.erase(exp.begin());
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+
+  out_it = out.erase(out.end() - 1);
+  exp_it = exp.erase(exp.end() - 1);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+
+  out_it = out.erase(out.begin() + 2);
+  exp_it = exp.erase(exp.begin() + 2);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+}
+
+BOOST_AUTO_TEST_CASE(erase_pos_as_vector)
+{
+  vector_type<int> input {1, 2, 3, 4, 5};
+  auto exp = input;
+
+  test_type<int> out {input};
+
+  auto out_it = out.erase(out.begin());
+  auto exp_it = exp.erase(exp.begin());
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+
+  out_it = out.erase(out.end() - 1);
+  exp_it = exp.erase(exp.end() - 1);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+
+  out_it = out.erase(out.begin() + 2);
+  exp_it = exp.erase(exp.begin() + 2);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+}
+
+BOOST_AUTO_TEST_CASE(erase_first_last_as_span)
+{
+  vector_type<int> input {1, 2, 3, 4, 5};
+  auto exp = input;
+
+  test_type<int> out {input.data(), input.size()};
+
+  auto out_it = out.erase(out.begin(), out.begin() + 1);
+  auto exp_it = exp.erase(exp.begin(), exp.begin() + 1);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+
+  out_it = out.erase(out.end() - 1, out.end());
+  exp_it = exp.erase(exp.end() - 1, exp.end());
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+
+  out_it = out.erase(out.begin(), out.begin());
+  exp_it = exp.erase(exp.begin(), exp.begin());
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+
+  out_it = out.erase(out.begin(), out.end());
+  exp_it = exp.erase(exp.begin(), exp.end());
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+}
+
+BOOST_AUTO_TEST_CASE(erase_first_last_as_vector)
+{
+  vector_type<int> input {1, 2, 3, 4, 5};
+  auto exp = input;
+
+  test_type<int> out {input};
+
+  auto out_it = out.erase(out.begin(), out.begin() + 1);
+  auto exp_it = exp.erase(exp.begin(), exp.begin() + 1);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+
+  out_it = out.erase(out.end() - 1, out.end());
+  exp_it = exp.erase(exp.end() - 1, exp.end());
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+
+  out_it = out.erase(out.begin(), out.begin());
+  exp_it = exp.erase(exp.begin(), exp.begin());
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+
+  out_it = out.erase(out.begin(), out.end());
+  exp_it = exp.erase(exp.begin(), exp.end());
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+}
+
 BOOST_AUTO_TEST_CASE(push_back_as_span_with_enough_capacity)
 {
   vector_type<int> input {1, 2, 3, 4, 5};

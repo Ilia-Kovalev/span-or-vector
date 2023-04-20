@@ -674,13 +674,25 @@ public:
   auto erase(const_iterator first, const_iterator last) -> iterator
   {
     if (this->is_vector()) {
-      return modify_as_vector_with_return([&](vector_type& vec) -> iterator
-                                          { return vec.erase(first, last); });
+      return this->modify_as_vector_with_iterator_return(
+          [&](vector_type& vec) -> vector_type::iterator
+          {
+            return vec.erase(this->to_vector_iterator(first),
+                             this->to_vector_iterator(last));
+          });
     }
 
-    std::move(last, this->end(), first);
-    this->resize(this->size() - std::distance(first, last));
-    return first;
+    const auto first_as_index = first - this->begin();
+    assert(first_as_index >= 0);
+    assert(static_cast<size_type>(first_as_index) < this->size());
+
+    const auto n_erased = std::distance(first, last);
+
+    std::move(this->begin() + first_as_index + n_erased,
+              this->end(),
+              this->begin() + first_as_index);
+    this->resize(this->size() - n_erased);
+    return this->begin() + first_as_index;
   }
 
   void push_back(const T& value) { insert(this->end(), value); }
