@@ -821,7 +821,8 @@ public:
   using base::resize;
   using base::shrink_to_fit;
   using base::size;
-  using base::swap;
+
+  void swap(span_or_vector& other) { base::swap(other); }
 
   using assignments::assign;
   using assignments::operator=;

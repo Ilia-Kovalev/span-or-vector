@@ -1873,6 +1873,70 @@ BOOST_AUTO_TEST_CASE(resize_count_value)
                     exp.get_allocator().n_allocations() - 1);
 }
 
+BOOST_AUTO_TEST_CASE(swap_span_span)
+{
+  vector_type<int> in1 {1, 2, 3};
+  vector_type<int> in2 {4, 5};
+
+  test_type<int> out1 {in1.data(), in1.size()};
+  test_type<int> out2 {in2.data(), in2.size()};
+
+  out1.swap(out2);
+
+  BOOST_CHECK(out1.is_span());
+  BOOST_CHECK(out2.is_span());
+  BOOST_CHECK_EQUAL(out1.capacity(), in2.size());
+  BOOST_CHECK_EQUAL(out2.capacity(), in1.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out1.begin(), out1.end(), in2.begin(), in2.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out2.begin(), out2.end(), in1.begin(), in1.end());
+}
+
+BOOST_AUTO_TEST_CASE(swap_span_vector)
+{
+  vector_type<int> in1 {1, 2, 3};
+  vector_type<int> in2 {4, 5};
+
+  test_type<int> out1 {in1.data(), in1.size()};
+  test_type<int> out2 {in2.begin(), in2.end()};
+
+  out1.swap(out2);
+
+  BOOST_CHECK(out1.is_vector());
+  BOOST_CHECK(out2.is_span());
+  BOOST_CHECK_EQUAL(out1.capacity(), in2.size());
+  BOOST_CHECK_EQUAL(out2.capacity(), in1.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out1.begin(), out1.end(), in2.begin(), in2.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out2.begin(), out2.end(), in1.begin(), in1.end());
+  BOOST_CHECK_EQUAL(out1.get_allocator().n_allocations(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(swap_vector_vector)
+{
+  vector_type<int> in1 {1, 2, 3};
+
+  vector_type<int> in2 {4, 5};
+
+  test_type<int> out1 {in1.begin(), in1.end()};
+  test_type<int> out2 {in2.begin(), in2.end()};
+
+  out1.swap(out2);
+
+  BOOST_CHECK(out1.is_vector());
+  BOOST_CHECK(out2.is_vector());
+  BOOST_CHECK_EQUAL(out1.capacity(), in2.capacity());
+  BOOST_CHECK_EQUAL(out2.capacity(), in1.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out1.begin(), out1.end(), in2.begin(), in2.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out2.begin(), out2.end(), in1.begin(), in1.end());
+  BOOST_CHECK_EQUAL(out1.get_allocator().n_allocations(), 1);
+  BOOST_CHECK_EQUAL(out2.get_allocator().n_allocations(), 1);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace modifiers
 
