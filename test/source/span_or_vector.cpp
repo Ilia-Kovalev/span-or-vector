@@ -1596,6 +1596,39 @@ BOOST_AUTO_TEST_CASE(emplace_back_as_vector)
   BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
                     exp.get_allocator().n_allocations());
 }
+
+BOOST_AUTO_TEST_CASE(pop_back_as_span)
+{
+  vector_type<int> input {1, 2, 3};
+  auto exp = input;
+
+  test_type<int> out {input.data(), input.size()};
+
+  out.pop_back();
+  exp.pop_back();
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+}
+
+BOOST_AUTO_TEST_CASE(pop_back_as_vector)
+{
+  vector_type<int> input {1, 2, 3};
+  auto exp = input;
+
+  test_type<int> out {input};
+
+  out.pop_back();
+  exp.pop_back();
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace modifiers
 
