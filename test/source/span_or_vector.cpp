@@ -1787,6 +1787,92 @@ BOOST_AUTO_TEST_CASE(pop_back_as_vector)
                     exp.get_allocator().n_allocations());
 }
 
+BOOST_AUTO_TEST_CASE(resize_count)
+{
+  vector_type<int> input {1, 2, 3};
+  vector_type<int> exp = {input.begin(), input.end()};
+
+  test_type<int> out {input.data(), input.size()};
+
+  out.resize(out.size());
+  exp.resize(exp.size());
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL(out.size(), input.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+
+  out.resize(1);
+  exp.resize(1);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL(out.size(), exp.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+
+  out.resize(5);
+  exp.resize(5);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), out.size());
+  BOOST_CHECK_EQUAL(out.size(), exp.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations() - 1);
+
+  out.resize(2);
+  exp.resize(2);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.size(), exp.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations() - 1);
+}
+
+BOOST_AUTO_TEST_CASE(resize_count_value)
+{
+  vector_type<int> input {1, 2, 3};
+  vector_type<int> exp = {input.begin(), input.end()};
+
+  test_type<int> out {input.data(), input.size()};
+
+  out.resize(out.size(), 4);
+  exp.resize(exp.size(), 4);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL(out.size(), input.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+
+  out.resize(1, 5);
+  exp.resize(1, 5);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL(out.size(), exp.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+
+  out.resize(5, 6);
+  exp.resize(5, 6);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), out.size());
+  BOOST_CHECK_EQUAL(out.size(), exp.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations() - 1);
+
+  out.resize(2, 7);
+  exp.resize(2, 7);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.size(), exp.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations() - 1);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace modifiers
 
