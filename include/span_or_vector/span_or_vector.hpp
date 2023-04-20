@@ -56,18 +56,6 @@ namespace span_or_vector
 {
 namespace detail
 {
-template<class Iter>
-auto forward_into(Iter iter) -> Iter
-{
-  return iter;
-}
-
-template<class Iter, class H, class... Tail>
-auto forward_into(Iter iter, H&& head, Tail&&... tail) -> Iter
-{
-  *iter++ = std::forward<H>(head);
-  return forward_into(iter, std::forward<Tail>(tail)...);
-}
 
 template<class T, class Allocator>
 class span_or_vector_base
@@ -672,11 +660,13 @@ public:
           });
     }
 
-    return insert_into_span(
-        pos,
-        sizeof...(args),
-        [&](iterator iter) -> iterator
-        { return detail::forward_into(iter, std::forward<Args>(args)...); });
+    return insert_into_span(pos,
+                            1,
+                            [&](iterator iter) -> iterator
+                            {
+                              *iter++ = T(std::forward<Args>(args)...);
+                              return iter;
+                            });
   }
 
   auto erase(const_iterator pos) -> iterator { return erase(pos, pos + 1); }

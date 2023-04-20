@@ -1268,10 +1268,7 @@ BOOST_AUTO_TEST_CASE(insert_pos_first_last_as_span_with_not_enough_capacity)
 
   const vector_type<int> in_inserted {6, 7};
 
-  test_type<int> out {input.begin(), input.end()};
-
-  exp.resize(input.size() - in_inserted.size());
-  out.resize(input.size() - in_inserted.size());
+  test_type<int> out {input.data(), input.size()};
 
   const auto exp_it =
       exp.insert(exp.end(), in_inserted.begin(), in_inserted.end());
@@ -1337,9 +1334,6 @@ BOOST_AUTO_TEST_CASE(insert_pos_ilist_as_span_with_not_enough_capacity)
 
   test_type<int> out {input.data(), input.size()};
 
-  exp.resize(input.size() - in_inserted.size());
-  out.resize(input.size() - in_inserted.size());
-
   const auto out_it = out.insert(out.end(), in_inserted);
   const auto exp_it = exp.insert(exp.end(), in_inserted);
 
@@ -1365,7 +1359,6 @@ BOOST_AUTO_TEST_CASE(insert_pos_ilist_as_span_empty_ilist)
   BOOST_CHECK(out.is_span());
   BOOST_CHECK_EQUAL(out.capacity(), out.size());
   BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
-  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
   BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
 }
 
@@ -1380,6 +1373,62 @@ BOOST_AUTO_TEST_CASE(insert_ilist_as_vector)
 
   const auto out_it = out.insert(out.end(), in_inserted);
   const auto exp_it = exp.insert(exp.end(), in_inserted);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+}
+
+BOOST_AUTO_TEST_CASE(emplace_as_span_with_enough_capacity)
+{
+  vector_type<std::string> input {"1", "2", "3", "4", "5"};
+  auto exp = input;
+
+  const std::size_t n_emplaced = 2;
+
+  test_type<std::string> out {input.data(), input.size()};
+
+  exp.resize(input.size() - n_emplaced - 1);
+  out.resize(input.size() - n_emplaced - 1);
+
+  const auto out_it = out.emplace(out.begin() + 1, 3u, 'x');
+  const auto exp_it = exp.emplace(exp.begin() + 1, 3u, 'x');
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+}
+
+BOOST_AUTO_TEST_CASE(emplace_as_span_with_not_enough_capacity)
+{
+  vector_type<std::string> input {"1", "2", "3", "4", "5"};
+  auto exp = input;
+
+  test_type<std::string> out {input.data(), input.size()};
+
+  const auto out_it = out.emplace(out.begin() + 1, 3u, 'x');
+  const auto exp_it = exp.emplace(exp.begin() + 1, 3u, 'x');
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), out.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+  BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
+}
+
+BOOST_AUTO_TEST_CASE(emplace_as_vector)
+{
+  vector_type<std::string> input {"1", "2", "3", "4", "5"};
+  auto exp = input;
+
+  test_type<std::string> out {input};
+
+  const auto out_it = out.emplace(out.begin() + 1, 3u, 'x');
+  const auto exp_it = exp.emplace(exp.begin() + 1, 3u, 'x');
 
   BOOST_CHECK(out.is_vector());
   BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
