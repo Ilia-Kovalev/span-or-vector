@@ -293,7 +293,7 @@ public:
     modify_as_vector([&](vector_type& vec) { vec.resize(count, value); });
   }
 
-  void swap(span_or_vector_base& other)
+  void swap(span_or_vector_base& other) noexcept
   {
     vector_type::swap(static_cast<vector_type&>(other));
     std::swap(static_cast<span_type&>(*this), static_cast<span_type&>(other));
