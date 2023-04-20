@@ -558,27 +558,14 @@ public:
   auto at(size_type pos) const -> const_reference
   {
     check_out_of_range(pos);
-    return operator[](pos);
+    return this->operator[](pos);
   }
 
   auto at(size_type pos) -> reference
   {
     check_out_of_range(pos);
-    return operator[](pos);
+    return this->operator[](pos);
   }
-
-  using base::begin;
-  using base::end;
-  using base::operator[];
-  using base::back;
-  using base::cbegin;
-  using base::cend;
-  using base::crbegin;
-  using base::crend;
-  using base::data;
-  using base::front;
-  using base::rbegin;
-  using base::rend;
 
 private:
   void check_out_of_range(size_type pos) const
@@ -780,9 +767,6 @@ class span_or_vector
     , public detail::span_or_vector_assignments<T, Allocator>
 {
   using base = detail::span_or_vector_base<T, Allocator>;
-  using element_access = detail::span_or_vector_element_access<T, Allocator>;
-  using modifiers = detail::span_or_vector_modifiers<T, Allocator>;
-  using assignments = detail::span_or_vector_assignments<T, Allocator>;
 
 public:
   using value_type = typename base::value_type;
@@ -822,43 +806,6 @@ public:
     return *this;
   }
 
-  using base::is_span;
-  using base::is_vector;
-  using base::move_to_vector;
-  using base::to_vector;
-
-  using base::capacity;
-  using base::empty;
-  using base::get_allocator;
-  using base::max_size;
-  using base::reserve;
-  using base::resize;
-  using base::shrink_to_fit;
-  using base::size;
-
-  using assignments::assign;
-  using assignments::operator=;
-
-  using element_access::at;
-  using element_access::begin;
-  using element_access::end;
-  using element_access::operator[];
-  using element_access::back;
-  using element_access::cbegin;
-  using element_access::cend;
-  using element_access::crbegin;
-  using element_access::crend;
-  using element_access::data;
-  using element_access::front;
-  using element_access::rbegin;
-  using element_access::rend;
-
-  using modifiers::clear;
-  using modifiers::emplace;
-  using modifiers::emplace_back;
-  using modifiers::erase;
-  using modifiers::insert;
-  using modifiers::pop_back;
-  using modifiers::push_back;
+  using detail::span_or_vector_assignments<T, Allocator>::operator=;
 };
 }  // namespace span_or_vector
