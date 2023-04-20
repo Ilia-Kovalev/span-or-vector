@@ -1438,6 +1438,114 @@ BOOST_AUTO_TEST_CASE(emplace_as_vector)
   BOOST_CHECK_EQUAL(out_it - out.begin(), exp_it - exp.begin());
 }
 
+BOOST_AUTO_TEST_CASE(push_back_as_span_with_enough_capacity)
+{
+  vector_type<int> input {1, 2, 3, 4, 5};
+  auto exp = input;
+
+  const int in_inserted {6};
+
+  test_type<int> out {input.data(), input.size()};
+
+  exp.resize(input.size() - 1);
+  out.resize(input.size() - 1);
+
+  out.push_back(in_inserted);
+  exp.push_back(in_inserted);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+}
+
+BOOST_AUTO_TEST_CASE(push_back_as_span_with_not_enough_capacity)
+{
+  vector_type<int> input {1, 2, 3, 4, 5};
+  auto exp = input;
+
+  const int in_inserted {6};
+
+  test_type<int> out {input.data(), input.size()};
+
+  out.push_back(in_inserted);
+  exp.push_back(in_inserted);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), out.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(push_back_as_vector)
+{
+  vector_type<int> input {1, 2, 3, 4, 5};
+  auto exp = input;
+
+  const int in_inserted {6};
+
+  test_type<int> out {input};
+
+  out.push_back(in_inserted);
+  exp.push_back(in_inserted);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+}
+
+BOOST_AUTO_TEST_CASE(push_back_rvalue_as_span_with_enough_capacity)
+{
+  vector_type<int> input {1, 2, 3, 4, 5};
+  auto exp = input;
+
+  test_type<int> out {input.data(), input.size()};
+
+  exp.resize(input.size() - 1);
+  out.resize(input.size() - 1);
+
+  out.push_back(6);
+  exp.push_back(6);
+
+  BOOST_CHECK(out.is_span());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+}
+
+BOOST_AUTO_TEST_CASE(push_back_rvalue_as_span_with_not_enough_capacity)
+{
+  vector_type<int> input {1, 2, 3, 4, 5};
+  auto exp = input;
+
+  test_type<int> out {input.data(), input.size()};
+
+  out.push_back(6);
+  exp.push_back(6);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), out.size());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(push_back_rvalue_as_vector)
+{
+  vector_type<int> input {1, 2, 3, 4, 5};
+  auto exp = input;
+
+  test_type<int> out {input};
+
+  out.push_back(6);
+  exp.push_back(6);
+
+  BOOST_CHECK(out.is_vector());
+  BOOST_CHECK_EQUAL(out.capacity(), exp.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(out.begin(), out.end(), exp.begin(), exp.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp.get_allocator().n_allocations());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace modifiers
 
