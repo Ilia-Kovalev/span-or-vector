@@ -664,6 +664,9 @@ public:
                             1,
                             [&](iterator iter) -> iterator
                             {
+                              // False positive because in general case we call
+                              // T's constructor here
+                              // NOLINTNEXTLINE(google-readability-casting)
                               *iter++ = T(std::forward<Args>(args)...);
                               return iter;
                             });
@@ -675,7 +678,7 @@ public:
   {
     if (this->is_vector()) {
       return this->modify_as_vector_with_iterator_return(
-          [&](vector_type& vec) -> vector_type::iterator
+          [&](vector_type& vec) -> typename vector_type::iterator
           {
             return vec.erase(this->to_vector_iterator(first),
                              this->to_vector_iterator(last));
@@ -691,7 +694,7 @@ public:
     std::move(this->begin() + first_as_index + n_erased,
               this->end(),
               this->begin() + first_as_index);
-    this->resize(this->size() - n_erased);
+    this->resize(this->size() - static_cast<size_type>(n_erased));
     return this->begin() + first_as_index;
   }
 
