@@ -99,6 +99,7 @@ public:
   using vector_type::get_allocator;
   using vector_type::max_size;
 
+protected:
   span_or_vector_base() = default;
   span_or_vector_base(const span_or_vector_base& other)
       : vector_type()
@@ -160,6 +161,7 @@ public:
     return *this;
   }
 
+public:
   span_or_vector_base(T* first, size_type count, const Allocator& alloc = {})
       : vector_type(alloc)
       , span_type(first, count)
@@ -291,7 +293,13 @@ public:
     modify_as_vector([&](vector_type& vec) { vec.resize(count, value); });
   }
 
-  void swap(span_or_vector_base& other) { std::swap(*this, other); }
+  void swap(span_or_vector_base& other)
+  {
+    vector_type::swap(static_cast<vector_type&>(other));
+    std::swap(static_cast<span_type&>(*this), static_cast<span_type&>(other));
+    std::swap(span_capacity_, other.span_capacity_);
+    std::swap(is_span_, other.is_span_);
+  }
 
   auto is_span() const noexcept -> bool { return is_span_; }
 
@@ -427,7 +435,7 @@ auto operator<(const span_or_vector_base<T, Allocator>& lhs,
                const span_or_vector_base<T, Allocator>& rhs) -> bool
 {
   return std::lexicographical_compare(
-      lhs.begin(), lhs.end(), rhs.begin(), lhs.end());
+      lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template<class T, class Allocator>
@@ -454,7 +462,7 @@ auto operator<=(const span_or_vector_base<T, Allocator>& lhs,
 
 template<class T, class Allocator>
 class span_or_vector_assignments
-    : virtual protected span_or_vector_base<T, Allocator>
+    : virtual public span_or_vector_base<T, Allocator>
 {
   using base = span_or_vector_base<T, Allocator>;
 
@@ -462,6 +470,7 @@ public:
   using vector_type = typename base::vector_type;
   using size_type = typename base::size_type;
 
+protected:
   span_or_vector_assignments() = default;
   ~span_or_vector_assignments() = default;
   span_or_vector_assignments(const span_or_vector_assignments&) = default;
@@ -471,6 +480,7 @@ public:
   auto operator=(span_or_vector_assignments&&) noexcept
       -> span_or_vector_assignments& = delete;
 
+public:
   auto operator=(const vector_type& other) -> span_or_vector_assignments&
   {
     this->modify_as_vector([&](vector_type& vec) { vec = other; });
@@ -524,7 +534,7 @@ public:
 
 template<class T, class Allocator>
 class span_or_vector_element_access
-    : virtual protected span_or_vector_base<T, Allocator>
+    : virtual public span_or_vector_base<T, Allocator>
 {
   using base = span_or_vector_base<T, Allocator>;
 
@@ -533,6 +543,7 @@ public:
   using reference = typename base::reference;
   using const_reference = typename base::const_reference;
 
+protected:
   span_or_vector_element_access() = default;
   ~span_or_vector_element_access() = default;
   span_or_vector_element_access(const span_or_vector_element_access&) = default;
@@ -543,6 +554,7 @@ public:
   auto operator=(span_or_vector_element_access&&) noexcept
       -> span_or_vector_element_access& = delete;
 
+public:
   auto at(size_type pos) const -> const_reference
   {
     check_out_of_range(pos);
@@ -581,7 +593,7 @@ private:
 
 template<class T, class Allocator>
 class span_or_vector_modifiers
-    : virtual protected span_or_vector_base<T, Allocator>
+    : virtual public span_or_vector_base<T, Allocator>
 {
   using base = span_or_vector_base<T, Allocator>;
 
@@ -591,6 +603,7 @@ public:
   using iterator = typename base::iterator;
   using const_iterator = typename base::const_iterator;
 
+protected:
   span_or_vector_modifiers() = default;
   ~span_or_vector_modifiers() = default;
   span_or_vector_modifiers(const span_or_vector_modifiers&) = default;
@@ -600,6 +613,7 @@ public:
   auto operator=(span_or_vector_modifiers&&) noexcept
       -> span_or_vector_modifiers& = delete;
 
+public:
   auto insert(const_iterator pos, const T& value) -> iterator
   {
     return insert(pos, 1, value);
@@ -760,10 +774,10 @@ private:
 
 template<class T, class Allocator = std::allocator<T>>
 class span_or_vector
-    : virtual private detail::span_or_vector_base<T, Allocator>
-    , private detail::span_or_vector_element_access<T, Allocator>
-    , private detail::span_or_vector_modifiers<T, Allocator>
-    , private detail::span_or_vector_assignments<T, Allocator>
+    : virtual public detail::span_or_vector_base<T, Allocator>
+    , public detail::span_or_vector_element_access<T, Allocator>
+    , public detail::span_or_vector_modifiers<T, Allocator>
+    , public detail::span_or_vector_assignments<T, Allocator>
 {
   using base = detail::span_or_vector_base<T, Allocator>;
   using element_access = detail::span_or_vector_element_access<T, Allocator>;
@@ -821,8 +835,6 @@ public:
   using base::resize;
   using base::shrink_to_fit;
   using base::size;
-
-  void swap(span_or_vector& other) { base::swap(other); }
 
   using assignments::assign;
   using assignments::operator=;

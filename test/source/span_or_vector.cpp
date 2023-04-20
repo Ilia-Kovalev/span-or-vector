@@ -1940,6 +1940,53 @@ BOOST_AUTO_TEST_CASE(swap_vector_vector)
 BOOST_AUTO_TEST_SUITE_END()
 }  // namespace modifiers
 
+namespace non_member_functions
+{
+BOOST_AUTO_TEST_SUITE(non_member_functions)
+
+BOOST_AUTO_TEST_CASE(comparisons)
+{
+  vector_type<int> in1 {1, 2, 3};
+  vector_type<int> in2 {4, 5, 6, 7};
+
+  const test_type<int> out1 {in1.data(), in2.size()};
+  const test_type<int> out2 {in2.begin(), in2.end()};
+
+  BOOST_CHECK_EQUAL(out1 == out2, in1 == in2);
+  BOOST_CHECK_EQUAL(out1 == out2, in1 == in2);
+  BOOST_CHECK_EQUAL(out2 == out1, in2 == in1);
+  BOOST_CHECK_EQUAL(out2 == out2, in2 == in2);
+
+  BOOST_CHECK_EQUAL(out1 != out2, in1 != in2);
+  BOOST_CHECK_EQUAL(out1 != out2, in1 != in2);
+  BOOST_CHECK_EQUAL(out2 != out1, in2 != in1);
+  BOOST_CHECK_EQUAL(out2 != out2, in2 != in2);
+
+  BOOST_CHECK_EQUAL(out1 < out2, in1 < in2);
+  BOOST_CHECK_EQUAL(out1 < out2, in1 < in2);
+  BOOST_CHECK_EQUAL(out2 < out1, in2 < in1);
+  BOOST_CHECK_EQUAL(out2 < out2, in2 < in2);
+
+  BOOST_CHECK_EQUAL(out1 > out2, in1 > in2);
+  BOOST_CHECK_EQUAL(out1 > out2, in1 > in2);
+  BOOST_CHECK_EQUAL(out2 > out1, in2 > in1);
+  BOOST_CHECK_EQUAL(out2 > out2, in2 > in2);
+
+  BOOST_CHECK_EQUAL(out1 >= out2, in1 >= in2);
+  BOOST_CHECK_EQUAL(out1 >= out2, in1 >= in2);
+  BOOST_CHECK_EQUAL(out2 >= out1, in2 >= in1);
+  BOOST_CHECK_EQUAL(out2 >= out2, in2 >= in2);
+
+  BOOST_CHECK_EQUAL(out1 <= out2, in1 <= in2);
+  BOOST_CHECK_EQUAL(out1 <= out2, in1 <= in2);
+  BOOST_CHECK_EQUAL(out2 <= out1, in2 <= in1);
+  BOOST_CHECK_EQUAL(out2 <= out2, in2 <= in2);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+}  // namespace non_member_functions
+
 // NOLINTEND(bugprone-use-after-move, hicpp-invalid-access-moved,
 // clang-diagnostic-self-assign-overloaded,cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
