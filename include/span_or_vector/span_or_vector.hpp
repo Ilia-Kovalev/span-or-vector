@@ -308,7 +308,7 @@ public:
   auto to_vector() const -> vector_type
   {
     if (is_vector()) {
-      return *this;
+      return static_cast<const vector_type&>(*this);
     }
     return {begin(), end()};
   }
@@ -324,6 +324,7 @@ public:
     return {begin(), end()};
   }
 
+protected:
   template<class F>
   void modify_as_vector(F&& operation)
   {
@@ -335,7 +336,7 @@ public:
   auto modify_as_vector_with_return(F&& operation) ->
       typename std::result_of<F(vector_type&)>::type
   {
-    const auto result = operation(*this);
+    auto result = operation(*this);
     update_span();
     return result;
   }
@@ -477,10 +478,11 @@ protected:
   span_or_vector_assignments(span_or_vector_assignments&&) noexcept = default;
   auto operator=(const span_or_vector_assignments&)
       -> span_or_vector_assignments& = default;
+
+public:
   auto operator=(span_or_vector_assignments&&) noexcept
       -> span_or_vector_assignments& = delete;
 
-public:
   auto operator=(const vector_type& other) -> span_or_vector_assignments&
   {
     this->modify_as_vector([&](vector_type& vec) { vec = other; });
@@ -551,10 +553,11 @@ protected:
       default;
   auto operator=(const span_or_vector_element_access&)
       -> span_or_vector_element_access& = default;
+
+public:
   auto operator=(span_or_vector_element_access&&) noexcept
       -> span_or_vector_element_access& = delete;
 
-public:
   auto at(size_type pos) const -> const_reference
   {
     check_out_of_range(pos);
@@ -597,10 +600,11 @@ protected:
   span_or_vector_modifiers(span_or_vector_modifiers&&) noexcept = default;
   auto operator=(const span_or_vector_modifiers&)
       -> span_or_vector_modifiers& = default;
+
+public:
   auto operator=(span_or_vector_modifiers&&) noexcept
       -> span_or_vector_modifiers& = delete;
 
-public:
   auto insert(const_iterator pos, const T& value) -> iterator
   {
     return insert(pos, 1, value);

@@ -1987,6 +1987,80 @@ BOOST_AUTO_TEST_SUITE_END()
 
 }  // namespace non_member_functions
 
+namespace helper_methods
+{
+BOOST_AUTO_TEST_SUITE(helper_methods)
+
+BOOST_AUTO_TEST_CASE(to_vector_as_span)
+{
+  vector_type<int> in_data {1, 2, 3};
+  const test_type<int> input {in_data.data(), in_data.size()};
+
+  const vector_type<int> out = input.to_vector();
+
+  BOOST_CHECK_EQUAL(out.size(), input.size());
+  BOOST_CHECK_EQUAL(out.capacity(), input.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(to_vector_as_vector)
+{
+  const test_type<int> input {1, 2, 3};
+
+  const vector_type<int> out = input.to_vector();
+
+  BOOST_CHECK_NE(input.data(), out.data());
+  BOOST_CHECK_EQUAL(out.size(), input.size());
+  BOOST_CHECK_EQUAL(out.capacity(), input.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations()
+                        - input.get_allocator().n_allocations(),
+                    1);
+}
+
+BOOST_AUTO_TEST_CASE(move_to_vector_as_span)
+{
+  vector_type<int> in_data {1, 2, 3};
+  test_type<int> input {in_data.data(), in_data.size()};
+
+  const vector_type<int> out = input.move_to_vector();
+
+  BOOST_CHECK_EQUAL(out.size(), input.size());
+  BOOST_CHECK_EQUAL(out.capacity(), input.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), input.begin(), input.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(move_to_vector_as_vector)
+{
+  const vector_type<int> in_data {1, 2, 3};
+  test_type<int> input {in_data.begin(), in_data.end()};
+
+  const vector_type<int> out = input.move_to_vector();
+  vector_type<int> exp_in {in_data.begin(), in_data.end()};
+  const vector_type<int> exp_out {std::move(exp_in)};
+
+  BOOST_CHECK(input.is_vector());
+  BOOST_CHECK_EQUAL(input.empty(), exp_in.empty());
+  BOOST_CHECK_EQUAL(input.capacity(), exp_in.capacity());
+  BOOST_CHECK_EQUAL(input.get_allocator().n_allocations(),
+                    exp_in.get_allocator().n_allocations());
+
+  BOOST_CHECK_EQUAL(out.size(), exp_out.size());
+  BOOST_CHECK_EQUAL(out.capacity(), exp_out.capacity());
+  BOOST_CHECK_EQUAL_COLLECTIONS(
+      out.begin(), out.end(), exp_out.begin(), exp_out.end());
+  BOOST_CHECK_EQUAL(out.get_allocator().n_allocations(),
+                    exp_out.get_allocator().n_allocations());
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+}  // namespace helper_methods
+
 // NOLINTEND(bugprone-use-after-move, hicpp-invalid-access-moved,
 // clang-diagnostic-self-assign-overloaded,cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
