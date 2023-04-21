@@ -8,6 +8,8 @@ include(../cmake/windows-set-path.cmake)
 
 # ---- Dependencies ----
 
+find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+
 if(PROJECT_IS_TOP_LEVEL)
   find_package(span_or_vector REQUIRED)
   enable_testing()
@@ -15,9 +17,8 @@ endif()
 
 # ---- Tests ----
 
-add_executable(span_or_vector_test source/span_or_vector_test.cpp)
-target_link_libraries(span_or_vector_test PRIVATE span_or_vector::span_or_vector)
-target_compile_features(span_or_vector_test PRIVATE cxx_std_11)
+add_executable(span_or_vector_test "source/span_or_vector.cpp")
+target_link_libraries(span_or_vector_test PRIVATE span_or_vector::span_or_vector Boost::unit_test_framework)
 
 add_test(NAME span_or_vector_test COMMAND span_or_vector_test)
 

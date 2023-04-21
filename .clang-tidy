@@ -6,12 +6,14 @@ Checks: "*,\
   -google-readability-todo,\
   -altera-*,\
   -fuchsia-*,\
-  fuchsia-multiple-inheritance,\
   -llvm-header-guard,\
   -llvm-include-order,\
   -llvmlibc-*,\
   -modernize-use-nodiscard,\
-  -misc-non-private-member-variables-in-classes"
+  -misc-non-private-member-variables-in-classes,\
+  -hicpp-named-parameter,\
+  -readability-named-parameter
+  "
 WarningsAsErrors: ''
 CheckOptions:
   - key: 'bugprone-argument-comment.StrictMode'
@@ -112,14 +114,14 @@ CheckOptions:
     value: 'lower_case'
   - key: 'readability-identifier-naming.PrivateMemberCase'
     value: 'lower_case'
-  - key: 'readability-identifier-naming.PrivateMemberPrefix'
-    value: 'm_'
+  - key: 'readability-identifier-naming.PrivateMemberSuffix'
+    value: '_'
   - key: 'readability-identifier-naming.PrivateMethodCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.ProtectedMemberCase'
     value: 'lower_case'
-  - key: 'readability-identifier-naming.ProtectedMemberPrefix'
-    value: 'm_'
+  - key: 'readability-identifier-naming.ProtectedMemberSuffix'
+    value: '_'
   - key: 'readability-identifier-naming.ProtectedMethodCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.PublicMemberCase'

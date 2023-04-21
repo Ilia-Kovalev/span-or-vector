@@ -1,0 +1,23 @@
+{
+  "name": "span-or-vector",
+  "version-semver": "0.0.0",
+  "dependencies": [
+        {
+          "name": "boost-core",
+          "version>=": "1.78.0"
+        }
+  ],
+  "default-features": [],
+  "features": {
+    "test": {
+      "description": "Dependencies for testing",
+      "dependencies": [
+        {
+          "name": "boost-test",
+          "version>=": "1.78.0"
+        }
+      ]
+    }
+  },
+  "builtin-baseline": "8daf70c56ba9581f5251a5d4675eb771b6b34957"
+}

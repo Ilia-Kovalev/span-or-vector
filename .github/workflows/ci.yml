@@ -9,6 +9,9 @@ on:
     branches:
     - master
 
+env:
+  VCPKG_COMMIT: "8daf70c56ba9581f5251a5d4675eb771b6b34957"
+
 jobs:
   lint:
     runs-on: ubuntu-22.04
@@ -38,8 +41,7 @@ jobs:
     # edit the "<name>" placeholder to your GitHub name.
     # If you do not wish to use codecov, then simply delete this job from the
     # workflow.
-    if: github.repository_owner == '<name>'
-      && false
+    if: github.repository_owner == 'Tristis116' 
 
     steps:
     - uses: actions/checkout@v3
@@ -47,6 +49,10 @@ jobs:
     - name: Install LCov
       run: sudo apt-get update -q
         && sudo apt-get install lcov -q -y
+
+    - name: Install vcpkg
+      uses: friendlyanon/setup-vcpkg@v1
+      with: { committish: "${{ env.VCPKG_COMMIT }}" }
 
     - name: Configure
       run: cmake --preset=ci-coverage
@@ -75,6 +81,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
+    - name: Install vcpkg
+      uses: friendlyanon/setup-vcpkg@v1
+      with: { committish: "${{ env.VCPKG_COMMIT }}" }
 
     - name: Configure
       run: cmake --preset=ci-sanitize
@@ -113,6 +123,10 @@ jobs:
         sudo update-alternatives --install
         /usr/bin/clang-tidy clang-tidy
         /usr/bin/clang-tidy-14 140
+
+    - name: Install vcpkg
+      uses: friendlyanon/setup-vcpkg@v1
+      with: { committish: "${{ env.VCPKG_COMMIT }}" }
 
     - name: Setup MultiToolTask
       if: matrix.os == 'windows-2022'
