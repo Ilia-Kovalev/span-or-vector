@@ -30,32 +30,15 @@
 #include <string>
 #include <vector>
 
-#ifdef __cpp_lib_span
-#  include <span>
-namespace span_or_vector
-{
-namespace detail
-{
-template<typename T>
-using span_type = std::span<T>;
-}
-}  // namespace span_or_vector
-#else
-#  include <boost/core/span.hpp>
-namespace span_or_vector
-{
-namespace detail
-{
-template<class T>
-using span = boost::span<T>;
-}  // namespace detail
-}  // namespace span_or_vector
-#endif
+#include <boost/core/span.hpp>
 
 namespace span_or_vector
 {
 namespace detail
 {
+
+template<class T>
+using span = boost::span<T>;
 
 template<class T, class Allocator>
 class span_or_vector_base
@@ -344,9 +327,8 @@ protected:
   template<class F>
   auto modify_as_vector_with_iterator_return(F&& operation) -> iterator
   {
-    const typename vector_type::iterator result =
-        modify_as_vector_with_return(std::forward<F>(operation));
-    return to_span_iterator(result);
+    const auto iter = modify_as_vector_with_return(std::forward<F>(operation));
+    return to_span_iterator(iter);
   }
 
   void switch_to_vector(size_type capacity)

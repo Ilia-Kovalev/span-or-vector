@@ -17,10 +17,8 @@ include(cmake/variables.cmake)
 add_library(span_or_vector_span_or_vector INTERFACE)
 add_library(span_or_vector::span_or_vector ALIAS span_or_vector_span_or_vector)
 
-if (CXX_STANDARD LESS 20)
-    find_package(Boost 1.78.0 REQUIRED)
-    target_link_libraries(span_or_vector_span_or_vector INTERFACE Boost::boost)
-endif()
+find_package(Boost 1.78.0 REQUIRED)
+target_link_libraries(span_or_vector_span_or_vector INTERFACE Boost::boost)
 
 set_property(
     TARGET span_or_vector_span_or_vector PROPERTY

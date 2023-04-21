@@ -34,7 +34,7 @@
       "inherits": "cmake-pedantic",
       "cacheVariables": {
         "span_or_vector_DEVELOPER_MODE": "ON",
-        "VCPKG_MANIFEST_FEATURES": "test;boost-span"
+        "VCPKG_MANIFEST_FEATURES": "test"
       }
     },
     {

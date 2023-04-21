@@ -2,18 +2,13 @@
   "name": "span-or-vector",
   "version-semver": "0.0.0",
   "dependencies": [
-  ],
-  "default-features": [],
-  "features": {
-    "boost-span": {
-      "description": "Use boost::span c++ standard is less than 20",
-      "dependencies": [
         {
           "name": "boost-core",
           "version>=": "1.78.0"
         }
-      ]
-    },
+  ],
+  "default-features": [],
+  "features": {
     "test": {
       "description": "Dependencies for testing",
       "dependencies": [
