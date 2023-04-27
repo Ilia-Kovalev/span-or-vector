@@ -4,8 +4,8 @@ include(cmake/prelude.cmake)
 
 project(
     span_or_vector
-    VERSION 0.0.0
-    DESCRIPTION "A header-only library with an object that behaves as std::vector but can be initialized over existing data as a std::span. If the object was initialized as a span, then it allocates memory only on operations incompatible with the current span."
+    VERSION 0.1.0
+    DESCRIPTION "A header-only library with an object that behaves as std::vector but can be initialized over existing data as a span. If the object was initialized as a span, then it allocates memory only on operations incompatible with the current span."
     HOMEPAGE_URL "https://github.com/Tristis116/span-or-vector"
     LANGUAGES CXX
 )
