@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>span_or_vector::detail::span_or_vector_base class | span_or_vector</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
+  <link rel="icon" href="favicon-dark.png" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22272e" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <a href="index.html" id="m-navbar-brand" class="m-col-t-8 m-col-m-none m-left-m">span_or_vector</a>
+      <div class="m-col-t-4 m-hide-m m-text-right m-nopadr">
+        <a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+          <path id="m-doc-search-icon-path" d="m6 0c-3.31 0-6 2.69-6 6 0 3.31 2.69 6 6 6 1.49 0 2.85-0.541 3.89-1.44-0.0164 0.338 0.147 0.759 0.5 1.15l3.22 3.79c0.552 0.614 1.45 0.665 2 0.115 0.55-0.55 0.499-1.45-0.115-2l-3.79-3.22c-0.392-0.353-0.812-0.515-1.15-0.5 0.895-1.05 1.44-2.41 1.44-3.89 0-3.31-2.69-6-6-6zm0 1.56a4.44 4.44 0 0 1 4.44 4.44 4.44 4.44 0 0 1-4.44 4.44 4.44 4.44 0 0 1-4.44-4.44 4.44 4.44 0 0 1 4.44-4.44z"/>
+        </svg></a>
+        <a id="m-navbar-show" href="#navigation" title="Show navigation"></a>
+        <a id="m-navbar-hide" href="#" title="Hide navigation"></a>
+      </div>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-6 m-col-m-none">
+            <li>
+              <a href="pages.html">Pages</a>
+              <ol>
+                <li><a href="about.html">About</a></li>
+              </ol>
+            </li>
+            <li><a href="namespaces.html">Namespaces</a></li>
+          </ol>
+          <ol class="m-col-t-6 m-col-m-none" start="3">
+            <li><a href="annotated.html">Classes</a></li>
+            <li><a href="files.html">Files</a></li>
+            <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+              <use href="#m-doc-search-icon-path" />
+            </svg></a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main><article>
+  <div class="m-container m-container-inflatable">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <h1>
+          <div class="m-doc-include m-code m-inverted m-right-m m-text-right"><span class="cp">#include</span> <a class="cpf" href="span__or__vector_8hpp.html">&lt;span_or_vector.hpp&gt;</a></div>
+          <div class="m-doc-template">template&lt;class T, class Allocator&gt;</div>
+          <span class="m-breadcrumb"><a href="namespacespan__or__vector.html">span_or_vector</a>::<wbr/></span><span class="m-breadcrumb"><a href="namespacespan__or__vector_1_1detail.html">detail</a>::<wbr/></span>span_or_vector_base <span class="m-thin">class</span>
+        </h1>
+        <p>Base class that encapsulates operations with memory and enforces object&#x27;s invariant.</p>
+        <div class="m-block m-default">
+          <h3>Contents</h3>
+          <ul>
+            <li>
+              Reference
+              <ul>
+                <li><a href="#derived-classes">Derived classes</a></li>
+                <li><a href="#pub-types">Public types</a></li>
+                <li><a href="#typeless-methods">Constructors, destructors, conversion operators</a></li>
+                <li><a href="#pub-methods">Public functions</a></li>
+                <li><a href="#pro-methods">Protected functions</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <section id="derived-classes">
+          <h2><a href="#derived-classes">Derived classes</a></h2>
+          <dl class="m-doc">
+            <dt>
+              <div class="m-doc-template">template&lt;class T, class Allocator&gt;</div>
+              class <a href="classspan__or__vector_1_1detail_1_1span__or__vector__assignments.html" class="m-doc">span_or_vector_assignments</a> <span class="m-label m-flat m-warning">virtual</span>
+            </dt>
+            <dd>Base class with assignment method definitions.</dd>
+            <dt>
+              <div class="m-doc-template">template&lt;class T, class Allocator&gt;</div>
+              class <a href="classspan__or__vector_1_1detail_1_1span__or__vector__element__access.html" class="m-doc">span_or_vector_element_access</a> <span class="m-label m-flat m-warning">virtual</span>
+            </dt>
+            <dd>Base class with element access method definitions.</dd>
+            <dt>
+              <div class="m-doc-template">template&lt;class T, class Allocator&gt;</div>
+              class <a href="classspan__or__vector_1_1detail_1_1span__or__vector__modifiers.html" class="m-doc">span_or_vector_modifiers</a> <span class="m-label m-flat m-warning">virtual</span>
+            </dt>
+            <dd>Base class with modifier method definitions.</dd>
+          </dl>
+        </section>
+        <section id="pub-types">
+          <h2><a href="#pub-types">Public types</a></h2>
+          <dl class="m-doc">
+            <dt id="a636d699e1a138425664ebe73c72138fd">
+              using <a href="#a636d699e1a138425664ebe73c72138fd" class="m-doc-self">vector_type</a> = std::vector&lt;T, Allocator&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a54086e0ba6dd6a8c748cd556556f5a10">
+              using <a href="#a54086e0ba6dd6a8c748cd556556f5a10" class="m-doc-self">value_type</a> = typename span_type::value_type
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a1034acc9667e0c33b01ac004870bf6dd">
+              using <a href="#a1034acc9667e0c33b01ac004870bf6dd" class="m-doc-self">allocator_type</a> = typename vector_type::allocator_type
+            </dt>
+            <dd><span></span></dd>
+            <dt id="ad1e14101008b230ad50f3a043cf5d09b">
+              using <a href="#ad1e14101008b230ad50f3a043cf5d09b" class="m-doc-self">size_type</a> = typename span_type::size_type
+            </dt>
+            <dd><span></span></dd>
+            <dt id="ab004fc597780d6d1d80119cfabd1eb53">
+              using <a href="#ab004fc597780d6d1d80119cfabd1eb53" class="m-doc-self">difference_type</a> = typename span_type::difference_type
+            </dt>
+            <dd><span></span></dd>
+            <dt id="acdd19218416d127440a44c1add102222">
+              using <a href="#acdd19218416d127440a44c1add102222" class="m-doc-self">reference</a> = typename span_type::reference
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a5898954e29e500db6074525b012c0a90">
+              using <a href="#a5898954e29e500db6074525b012c0a90" class="m-doc-self">const_reference</a> = typename span_type::const_reference
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a17d0999be99f516e4d4a85fa5ed8ff44">
+              using <a href="#a17d0999be99f516e4d4a85fa5ed8ff44" class="m-doc-self">pointer</a> = typename span_type::pointer
+            </dt>
+            <dd><span></span></dd>
+            <dt id="adfc9d853df415052150af83a3e9cb9dd">
+              using <a href="#adfc9d853df415052150af83a3e9cb9dd" class="m-doc-self">const_pointer</a> = typename span_type::const_pointer
+            </dt>
+            <dd><span></span></dd>
+            <dt id="aec35f6dced806a6aa28743b3e16babd9">
+              using <a href="#aec35f6dced806a6aa28743b3e16babd9" class="m-doc-self">iterator</a> = typename span_type::iterator
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a7d749d361a51d5bc68a7f4705ac24f17">
+              using <a href="#a7d749d361a51d5bc68a7f4705ac24f17" class="m-doc-self">const_iterator</a> = typename span_type::const_iterator
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a8117a285ff514a91d54a53a1f798aac9">
+              using <a href="#a8117a285ff514a91d54a53a1f798aac9" class="m-doc-self">reverse_iterator</a> = typename span_type::reverse_iterator
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a9556ea045e0d6c3e3ce9d2181d69e68e">
+              using <a href="#a9556ea045e0d6c3e3ce9d2181d69e68e" class="m-doc-self">const_reverse_iterator</a> = typename span_type::const_reverse_iterator
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="typeless-methods">
+          <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
+          <dl class="m-doc">
+            <dt id="a652f7192d6e2d4f22950edf324751542">
+              <span class="m-doc-wrap-bumper"><a href="#a652f7192d6e2d4f22950edf324751542" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap">) <span class="m-label m-flat m-warning">protected</span> <span class="m-label m-flat m-info">defaulted</span></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="abed4cb85e7b2f059d9eae024b209e46b">
+              <span class="m-doc-wrap-bumper"><a href="#abed4cb85e7b2f059d9eae024b209e46b" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap">const <a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html" class="m-doc">span_<wbr />or_<wbr />vector_<wbr />base</a>&amp; other) <span class="m-label m-flat m-warning">protected</span></span>
+            </dt>
+            <dd>Copy constructor that always copies data to comply with std::vector behavior.</dd>
+            <dt id="a0ae0a807ccdfce59fb5c89390e224422">
+              <span class="m-doc-wrap-bumper"><a href="#a0ae0a807ccdfce59fb5c89390e224422" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html" class="m-doc">span_<wbr />or_<wbr />vector_<wbr />base</a>&amp;&amp; other) <span class="m-label m-flat m-warning">protected</span> <span class="m-label m-flat m-success">noexcept</span></span>
+            </dt>
+            <dd>If <code>other</code> is span, then moves only span and makes <code>other</code> empty. If <code>other</code> is vector, then moves it as std::vector.</dd>
+            <dt id="aa210a8c9a307d4b4a36ba547e491f06d">
+              <span class="m-doc-wrap-bumper"><a href="#aa210a8c9a307d4b4a36ba547e491f06d" class="m-doc-self">~span_or_vector_base</a>(</span><span class="m-doc-wrap">) <span class="m-label m-flat m-warning">protected</span> <span class="m-label m-flat m-info">defaulted</span></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper"><a href="#afaf60ed63376a2e413d449be0dc91719" class="m-doc">span_or_vector_base</a>(</span><span class="m-doc-wrap">T* first,
+              <a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#ad1e14101008b230ad50f3a043cf5d09b" class="m-doc">size_<wbr />type</a> count,
+              const Allocator&amp; alloc = {})</span>
+            </dt>
+            <dd>The only constructor different from std::vector. Initializes an object as a span.</dd>
+            <dt id="a06b293976db0ea7a5912a40ed14cc48f">
+              <span class="m-doc-wrap-bumper"><a href="#a06b293976db0ea7a5912a40ed14cc48f" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap">const Allocator&amp; alloc) <span class="m-label m-flat m-info">explicit</span> </span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="a0c06f5eed68f4ac406b33948e311d9d9">
+              <span class="m-doc-wrap-bumper"><a href="#a0c06f5eed68f4ac406b33948e311d9d9" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#ad1e14101008b230ad50f3a043cf5d09b" class="m-doc">size_<wbr />type</a> count,
+              const T&amp; value = T(),
+              const Allocator&amp; alloc = Allocator()) <span class="m-label m-flat m-info">explicit</span> </span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="afeb7cfbe0d9f7d06aadad8f6a265edfc">
+              <div class="m-doc-template">template&lt;class InputIt, typename = std::enable_if&lt;std::is_same&lt;              typename std::iterator_traits&lt;InputIt&gt;::iterator_category,               std::input_iterator_tag&gt;::value&gt;&gt;</div>
+              <span class="m-doc-wrap-bumper"><a href="#afeb7cfbe0d9f7d06aadad8f6a265edfc" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap">InputIt first,
+              InputIt last,
+              const Allocator&amp; alloc = Allocator())</span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="a5a0d29911cba055f7a14f8c72f8e012f">
+              <span class="m-doc-wrap-bumper"><a href="#a5a0d29911cba055f7a14f8c72f8e012f" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap">const <a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#a636d699e1a138425664ebe73c72138fd" class="m-doc">vector_<wbr />type</a>&amp; other) <span class="m-label m-flat m-info">explicit</span> </span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="a695abef6fba0f0083d6abb3584d313fe">
+              <span class="m-doc-wrap-bumper"><a href="#a695abef6fba0f0083d6abb3584d313fe" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap">const <a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#a636d699e1a138425664ebe73c72138fd" class="m-doc">vector_<wbr />type</a>&amp; other,
+              const Allocator&amp; alloc)</span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="ac11103e7482ee8044d5c3c44a3708481">
+              <span class="m-doc-wrap-bumper"><a href="#ac11103e7482ee8044d5c3c44a3708481" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#a636d699e1a138425664ebe73c72138fd" class="m-doc">vector_<wbr />type</a>&amp;&amp; other) <span class="m-label m-flat m-info">explicit</span> </span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="aedec0606ff1e69ff427e88a18fad2842">
+              <span class="m-doc-wrap-bumper"><a href="#aedec0606ff1e69ff427e88a18fad2842" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#a636d699e1a138425664ebe73c72138fd" class="m-doc">vector_<wbr />type</a>&amp;&amp; other,
+              const Allocator&amp; alloc)</span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="ac7f87b80616bcc993f13ca9b6c56b733">
+              <span class="m-doc-wrap-bumper"><a href="#ac7f87b80616bcc993f13ca9b6c56b733" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap">std::initializer_list&lt;T&gt; init,
+              const Allocator&amp; alloc = Allocator())</span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+          </dl>
+        </section>
+        <section id="pub-methods">
+          <h2><a href="#pub-methods">Public functions</a></h2>
+          <dl class="m-doc">
+            <dt id="a1497b0bbed0c10106f604ab05e0c7a9b">
+              <span class="m-doc-wrap-bumper">void <a href="#a1497b0bbed0c10106f604ab05e0c7a9b" class="m-doc-self">reserve</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#ad1e14101008b230ad50f3a043cf5d09b" class="m-doc">size_<wbr />type</a> new_cap)</span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="a1254e60172394a140b88842b9c1a3136">
+              <span class="m-doc-wrap-bumper">auto <a href="#a1254e60172394a140b88842b9c1a3136" class="m-doc-self">capacity</a>(</span><span class="m-doc-wrap">) const noexcept -&gt; size_type</span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="aa68ac8f3d6761de07a2b44a258b359b4">
+              <span class="m-doc-wrap-bumper">void <a href="#aa68ac8f3d6761de07a2b44a258b359b4" class="m-doc-self">shrink_to_fit</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="a21bc02dd2924c5d7f84746f2f9395a54">
+              <span class="m-doc-wrap-bumper">void <a href="#a21bc02dd2924c5d7f84746f2f9395a54" class="m-doc-self">resize</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#ad1e14101008b230ad50f3a043cf5d09b" class="m-doc">size_<wbr />type</a> count)</span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="a439946c89d8935c49b2cd9f231a75ae4">
+              <span class="m-doc-wrap-bumper">void <a href="#a439946c89d8935c49b2cd9f231a75ae4" class="m-doc-self">resize</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#ad1e14101008b230ad50f3a043cf5d09b" class="m-doc">size_<wbr />type</a> count,
+              const <a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#a54086e0ba6dd6a8c748cd556556f5a10" class="m-doc">value_<wbr />type</a>&amp; value)</span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="aca3d8ccd18732c7e2ff2a3f3190162e8">
+              <span class="m-doc-wrap-bumper">void <a href="#aca3d8ccd18732c7e2ff2a3f3190162e8" class="m-doc-self">swap</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html" class="m-doc">span_<wbr />or_<wbr />vector_<wbr />base</a>&amp; other) <span class="m-label m-flat m-success">noexcept</span></span>
+            </dt>
+            <dd>Replicates corresponding std::vector method.</dd>
+            <dt id="a31eb1023322cac022637cb45753c2cb9">
+              <span class="m-doc-wrap-bumper">auto <a href="#a31eb1023322cac022637cb45753c2cb9" class="m-doc-self">is_span</a>(</span><span class="m-doc-wrap">) const noexcept -&gt; bool</span>
+            </dt>
+            <dd>Indicates if object doesn&#x27;t have its own memory.</dd>
+            <dt id="a33b8cb1695741c1c9d310f8f5541f795">
+              <span class="m-doc-wrap-bumper">auto <a href="#a33b8cb1695741c1c9d310f8f5541f795" class="m-doc-self">is_vector</a>(</span><span class="m-doc-wrap">) const noexcept -&gt; bool</span>
+            </dt>
+            <dd>Indicates if object has its own memory.</dd>
+            <dt id="ac9c2dc46d61f158e2893ac5f5059f6f3">
+              <span class="m-doc-wrap-bumper">auto <a href="#ac9c2dc46d61f158e2893ac5f5059f6f3" class="m-doc-self">to_vector</a>(</span><span class="m-doc-wrap">) const -&gt; vector_type</span>
+            </dt>
+            <dd>Converts object to std::vector with data copied.</dd>
+            <dt id="a1e42f38d116ff12831240aa7d1a13379">
+              <span class="m-doc-wrap-bumper">auto <a href="#a1e42f38d116ff12831240aa7d1a13379" class="m-doc-self">move_to_vector</a>(</span><span class="m-doc-wrap">) -&gt; vector_type</span>
+            </dt>
+            <dd>Converts object to std::vector with moving data to returned vector is <a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#a33b8cb1695741c1c9d310f8f5541f795" class="m-doc">is_<wbr />vector()</a> is true, otherwise copies data from span.</dd>
+          </dl>
+        </section>
+        <section id="pro-methods">
+          <h2><a href="#pro-methods">Protected functions</a></h2>
+          <dl class="m-doc">
+            <dt id="ac0f8875793d12600e4474e682f6feb8b">
+              <span class="m-doc-wrap-bumper">auto <a href="#ac0f8875793d12600e4474e682f6feb8b" class="m-doc-self">operator=</a>(</span><span class="m-doc-wrap">const <a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html" class="m-doc">span_<wbr />or_<wbr />vector_<wbr />base</a>&amp; other) -&gt; span_or_vector_base &amp;</span>
+            </dt>
+            <dd>Copy assignment that always copies data to comply with std::vector behavior.</dd>
+            <dt id="a469e0c726ffd857596ed3bfe6f552b46">
+              <span class="m-doc-wrap-bumper">auto <a href="#a469e0c726ffd857596ed3bfe6f552b46" class="m-doc-self">operator=</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html" class="m-doc">span_<wbr />or_<wbr />vector_<wbr />base</a>&amp;&amp; other) noexcept -&gt; span_or_vector_base &amp;</span>
+            </dt>
+            <dd>If <code>other</code> is span, then moves only span and makes <code>other</code> empty. If <code>other</code> is vector, then moves it as std::vector.</dd>
+            <dt id="a454d53b25bffa64bb9010ec7f19d6e59">
+              <div class="m-doc-template">template&lt;class F&gt;</div>
+              <span class="m-doc-wrap-bumper">void <a href="#a454d53b25bffa64bb9010ec7f19d6e59" class="m-doc-self">modify_as_vector</a>(</span><span class="m-doc-wrap">F&amp;&amp; operation)</span>
+            </dt>
+            <dd>Apply an operation to the object and update span after it. Switches the object to vector state. Should be called for all operations that change object size or can cause reallocation.</dd>
+            <dt id="a97b42c7bd2382fa2d0231bb6d2f990a2">
+              <div class="m-doc-template">template&lt;class F&gt;</div>
+              <span class="m-doc-wrap-bumper">auto <a href="#a97b42c7bd2382fa2d0231bb6d2f990a2" class="m-doc-self">modify_as_vector_with_return</a>(</span><span class="m-doc-wrap">F&amp;&amp; operation) &gt;::type</span>
+            </dt>
+            <dd>Alternative to <code>modify_as_vector</code> for operations with output.</dd>
+            <dt id="a88189e2c0330dcd12fb216503bb0144e">
+              <div class="m-doc-template">template&lt;class F&gt;</div>
+              <span class="m-doc-wrap-bumper">auto <a href="#a88189e2c0330dcd12fb216503bb0144e" class="m-doc-self">modify_as_vector_with_iterator_return</a>(</span><span class="m-doc-wrap">F&amp;&amp; operation) -&gt; iterator</span>
+            </dt>
+            <dd>Alternative to <code>modify_as_vector_with_return</code> for operations that return iterator pointing to vector.</dd>
+            <dt id="a77da48a3107c20ec7ce027d5b4bd1ed8">
+              <span class="m-doc-wrap-bumper">void <a href="#a77da48a3107c20ec7ce027d5b4bd1ed8" class="m-doc-self">switch_to_vector</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#ad1e14101008b230ad50f3a043cf5d09b" class="m-doc">size_<wbr />type</a> capacity)</span>
+            </dt>
+            <dd>Switch the object to vector state with specified capacity and copy current data to new memory location.</dd>
+            <dt id="a611ed7f86707862996fffc82f2a8ad94">
+              <span class="m-doc-wrap-bumper">void <a href="#a611ed7f86707862996fffc82f2a8ad94" class="m-doc-self">switch_to_vector</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd>Switch the object to vector state with current capacity and current data to new memory location.</dd>
+            <dt id="a1b49aaf3663243d81c0337b565800106">
+              <span class="m-doc-wrap-bumper">void <a href="#a1b49aaf3663243d81c0337b565800106" class="m-doc-self">switch_to_empty_vector</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#ad1e14101008b230ad50f3a043cf5d09b" class="m-doc">size_<wbr />type</a> capacity)</span>
+            </dt>
+            <dd>Switch the object to vector state with specified capacity without copying data.</dd>
+            <dt id="af3d848adf0a5606b6b85f05ec80b9c9e">
+              <span class="m-doc-wrap-bumper">void <a href="#af3d848adf0a5606b6b85f05ec80b9c9e" class="m-doc-self">switch_to_empty_vector</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd>Switch the object to vector state without copying data.</dd>
+            <dt id="a1a3ee2d87161e3fa0a5fa958b809f2bd">
+              <span class="m-doc-wrap-bumper">auto <a href="#a1a3ee2d87161e3fa0a5fa958b809f2bd" class="m-doc-self">to_vector_iterator</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#aec35f6dced806a6aa28743b3e16babd9" class="m-doc">iterator</a> iter) noexcept -&gt; typename vector_type::iterator</span>
+            </dt>
+            <dd>Convert span iterator to vector iterator.</dd>
+            <dt id="a0819ff498143e927107541ce87cebc37">
+              <span class="m-doc-wrap-bumper">auto <a href="#a0819ff498143e927107541ce87cebc37" class="m-doc-self">to_vector_iterator</a>(</span><span class="m-doc-wrap"><a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#a7d749d361a51d5bc68a7f4705ac24f17" class="m-doc">const_<wbr />iterator</a> iter) const noexcept -&gt; typename vector_type::const_iterator</span>
+            </dt>
+            <dd>Convert span iterator to vector iterator.</dd>
+            <dt id="aa78995ef58bfc27bb698ecc6ba8df6f3">
+              <span class="m-doc-wrap-bumper">auto <a href="#aa78995ef58bfc27bb698ecc6ba8df6f3" class="m-doc-self">to_span_iterator</a>(</span><span class="m-doc-wrap">typename vector_type::iterator iter) const noexcept -&gt; iterator</span>
+            </dt>
+            <dd>Convert vector iterator to span iterator.</dd>
+            <dt id="a52ba0e2da89b8bbe5dc62cfee3902c00">
+              <span class="m-doc-wrap-bumper">auto <a href="#a52ba0e2da89b8bbe5dc62cfee3902c00" class="m-doc-self">to_span_iterator</a>(</span><span class="m-doc-wrap">typename vector_type::const_iterator iter) const noexcept -&gt; const_iterator</span>
+            </dt>
+            <dd>Convert vector iterator to span iterator.</dd>
+          </dl>
+        </section>
+        <section>
+          <h2>Function documentation</h2>
+          <section class="m-doc-details" id="afaf60ed63376a2e413d449be0dc91719"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;class T, class Allocator&gt;
+              </div>
+              <span class="m-doc-wrap-bumper"> span_or_vector::<wbr />detail::<wbr />span_or_vector_base&lt;T, Allocator&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#afaf60ed63376a2e413d449be0dc91719" class="m-doc-self">span_or_vector_base</a>(</span><span class="m-doc-wrap">T* first,
+              <a href="classspan__or__vector_1_1detail_1_1span__or__vector__base.html#ad1e14101008b230ad50f3a043cf5d09b" class="m-doc">size_<wbr />type</a> count,
+              const Allocator&amp; alloc = {})</span></span>
+            </h3>
+            <p>The only constructor different from std::vector. Initializes an object as a span.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="width: 1%">first</td>
+                  <td>pointer to data</td>
+                </tr>
+                <tr>
+                  <td>count</td>
+                  <td>number of elements used as capacity</td>
+                </tr>
+                <tr>
+                  <td>alloc</td>
+                  <td>allocator used for memory allocation when switching to vector state</td>
+                </tr>
+              </tbody>
+            </table>
+          </div></section>
+        </section>
+      </div>
+    </div>
+  </div>
+</article></main>
+<div class="m-doc-search" id="search">
+  <a href="#!" onclick="return hideSearch()"></a>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-m-8 m-push-m-2">
+        <div class="m-doc-search-header m-text m-small">
+          <div><span class="m-label m-default">Tab</span> / <span class="m-label m-default">T</span> to search, <span class="m-label m-default">Esc</span> to close</div>
+          <div id="search-symbolcount">&hellip;</div>
+        </div>
+        <div class="m-doc-search-content">
+          <form>
+            <input type="search" name="q" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" autocomplete="off" spellcheck="false" />
+          </form>
+          <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
+          <div id="search-help" class="m-text m-dim m-text-center">
+            <p class="m-noindent">Search for symbols, directories, files, pages or
+            modules. You can omit any prefix from the symbol or file path; adding a
+            <code>:</code> or <code>/</code> suffix lists all members of given symbol or
+            directory.</p>
+            <p class="m-noindent">Use <span class="m-label m-dim">&darr;</span>
+            / <span class="m-label m-dim">&uarr;</span> to navigate through the list,
+            <span class="m-label m-dim">Enter</span> to go.
+            <span class="m-label m-dim">Tab</span> autocompletes common prefix, you can
+            copy a link to the result using <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">L</span> while <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">M</span> produces a Markdown link.</p>
+          </div>
+          <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="search-v1.js"></script>
+<script src="searchdata-v1.js" async="async"></script>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>span_or_vector. Created with <a href="https://doxygen.org/">Doxygen</a> 1.9.1 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>
