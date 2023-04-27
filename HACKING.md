@@ -3,9 +3,6 @@
 Here is some wisdom to help you build and test this project as a developer and
 potential contributor.
 
-If you plan to contribute, please read the [CONTRIBUTING](CONTRIBUTING.md)
-guide.
-
 ## Developer mode
 
 Build system targets that are only useful for developers of this project are
@@ -41,7 +38,7 @@ the project:
     {
       "name": "dev",
       "binaryDir": "${sourceDir}/build/dev",
-      "inherits": ["dev-mode", "ci-<os>"],
+      "inherits": ["dev-mode", "vcpkg, "ci-<os>"],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
@@ -75,6 +72,17 @@ can see what these correspond to in the
 `CMakeUserPresets.json` is also the perfect place in which you can put all
 sorts of things that you would otherwise want to pass to the configure command
 in the terminal.
+
+### Dependency manager
+
+The above preset will make use of the [vcpkg][vcpkg] dependency manager. After
+installing it, make sure the `VCPKG_ROOT` environment variable is pointing at
+the directory where the vcpkg executable is. On Windows, you might also want
+to inherit from the `vcpkg-win64-static` preset, which will make vcpkg install
+the dependencies as static libraries. This is only necessary if you don't want
+to setup `PATH` to run tests.
+
+[vcpkg]: https://github.com/microsoft/vcpkg
 
 ### Configure, build and test
 
