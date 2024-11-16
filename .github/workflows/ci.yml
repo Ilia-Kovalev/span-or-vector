@@ -13,7 +13,7 @@ on:
   - cron: '0 0 * * 6'
 
 env:
-  VCPKG_COMMIT: "8daf70c56ba9581f5251a5d4675eb771b6b34957"
+  VCPKG_COMMIT: "b2cb0da531c2f1f740045bfe7c4dac59f0b2b69c"
 
 jobs:
   lint:
